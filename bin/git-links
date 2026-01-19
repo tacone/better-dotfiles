@@ -12,6 +12,14 @@
 #       without)
 #       See: https://www.phind.com/search?cache=j455xtuwyb4jzhnnmolit395
 
+# Detect VTE-based terminals (gnome-terminal, tilix, etc).
+# VTE historically doesn't support the SGR underline style (4:3) reliably,
+# so disable the dotted underline for those terminals.
+USE_UNDERLINE=1
+if [[ -n "${VTE_VERSION:-}" || -n "${GNOME_TERMINAL_SCREEN:-}" || -n "${TILIX_ID:-}" ]]; then
+    USE_UNDERLINE=0
+fi
+
 function parse_alias() {
     local name=${__line%%=*}
     local command=${__line#*=};
@@ -125,7 +133,13 @@ function get_url () {
 function print_link() {
     local url=$1
     local link_text=$2
-    local link=$'\e[94m\e]8;;'"$url"$'\a'"$link_text"$'\e]8;;\a\e[0m'
+    if [[ "${USE_UNDERLINE:-1}" -eq 1 ]]; then
+        # Use OSC 8 + dotted underline (SGR 4:3) where supported
+        local link=$'\e[94m\e]8;;'"$url"$'\a\e[4:1m'"$link_text"$'\e[24m\e]8;;\a\e[0m'
+    else
+        # Plain OSC 8 link without extended underline (use VTE default underline)
+        local link=$'\e[94m\e]8;;'"$url"$'\a'"$link_text"$'\e]8;;\a\e[0m'
+    fi
     echo -n $link
 }
 
@@ -242,7 +256,12 @@ function log () {
         local link_text="$hash"
         [[ $GIT_SHORT_HASH -eq 1 ]] && link_text="$short_hash"
 
-        link=$'\e]8;;'"$url"$'\a'"$link_text"$'\e]8;;\a' # in-lined for speed
+        # inline link: use the default underline when on VTE, otherwise add a solid underline
+        if [[ "${USE_UNDERLINE:-1}" -eq 1 ]]; then
+            link=$'\e]8;;'"$url"$'\a\e[4:1m'"$link_text"$'\e[24m\e]8;;\a' # in-lined for speed
+        else
+            link=$'\e]8;;'"$url"$'\a'"$link_text"$'\e]8;;\a' # in-lined for speed
+        fi
 
         # print the modified line
         echo -e "${__line//$hash/$link}"
