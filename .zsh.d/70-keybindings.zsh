@@ -4,8 +4,8 @@ _bind_custom_keys () {
     # --- base commands (just typing, no execution) ---
 
     # --- Alt + l|L to write git log and git log --all
-    bindkey -s '\el' 'glol\n'
-    bindkey -s '\eL' 'glola\n'
+    bindkey -s '\el' '  glol\n'
+    bindkey -s '\eL' '  glola\n'
     # --- Alt + s to pipe in grep
     bindkey -s '\eg' $_SEP' | grep -i '
     # --- Alt + x/X to pipe in xargs
@@ -28,19 +28,19 @@ _bind_custom_keys () {
     # --- Alt + j to @json
     bindkey -s '\ej' $_SEP' @json'
     # --- Alt + e to nnnn
-    bindkey -s '\ee' $_SEP'nnn -cH\n'
-    # --- Alt + Shift + y to yarn run
-    bindkey -s '\eY' $_SEP'yarn run '
+    bindkey -s '\ee' $_SEP'  nnn -cH\n'
 
 
     # --- instant commands (will execute immediately) ---
 
     # --- Alt + d to git diff
-    bindkey -s '\ed' "git diff\n"
+    bindkey -s '\ed' "  git diff\n"
     # --- Alt + D to git diff --cached
-    bindkey -s '\eD' "git diff --cached\n"
+    bindkey -s '\eD' "  git diff --cached\n"
     # --- Alt + . to cd ..
-    bindkey -s '\e.' "cd ..\n"
+    bindkey -s '\e.' "  cd ..\n"
+    # --- Alt + z for interactively seach zoxide
+    bindkey -s '\ez' "  zi\n"
 
     # --- misc ---
 
@@ -74,6 +74,72 @@ insert_watch () {
 }
 zle -N insert-watch insert_watch
 bindkey "^[w" "insert-watch"
+
+local FZF_KEYBINDINGS=''
+
+if [[ -f /usr/share/fzf/key-bindings.zsh ]]; then
+    FZF_KEYBINDINGS=$(cat <<'FZFB'
+Ctrl+T         - Paste selected file path(s) into the command line.
+Ctrl+R         - Fuzzy-search shell history and paste the selected entry.
+Alt+C          - Select a directory with fzf and cd into it.
+Alt+R          - Redraw the current line (used to refresh prompt after fzf).
+FZFB
+)
+fi
+
+# Show available custom keybindings
+_show_keybindings() {
+    cat <<'KEYS'
+
+Available keybindings:
+
+Alt-k          - show this help
+
+Basics:
+
+    Alt-.          - cd ..
+    Alt-f          - find . -name *
+    Ctrl+Backspace - delete word
+    Ctrl+Z         - toggle suspend (^Z) / foreground (fg) last job
+    Alt-z          - fuzzy search directory history (zoxide)
+
+Utils:
+    Alt-e          - open CLI file manager (nnn)
+    Alt-H          - run-help (man page for current command)
+
+Git:
+
+    Alt-l          - write git log (glol)
+    Alt-L          - write git log --all (glola)
+    Alt-o          - git checkout
+    Alt-d - git diff
+    Alt+D          - git diff --cached
+
+Quick chaining:
+
+    Alt-g          - add | grep -i to the current command
+    Alt-x / Alt-X  - add | xargs -n1 -d "\n" to the current command
+    Alt-s          - add | sed s///g to the current command
+    Alt-t          - add timestamp to the current command
+    Alt-c          - add | wc -l to the current command
+    Alt-u          - add | sort -u to the current command
+    Alt-y          - add @yml to the current command (pretty print yaml)
+    Alt-j          - add @json to the current command (pretty print json)
+    Alt-S          - insert sudo at the beginning of the current command
+    Alt-w          - insert watch at the beginning of the current command
+
+KEYS
+    if [[ -n "$FZF_KEYBINDINGS" ]]; then
+        echo Fuzzy Finder (fzf):
+        echo
+        echo "$FZF_KEYBINDINGS"
+    fi
+    echo
+}
+
+
+# bind a key to show keybindings (Alt+k)
+bindkey -s '\ek' '_show_keybindings\n'
 
 # ^Z to foreground the last suspended job.
 foreground-current-job() { fg; }
