@@ -114,3 +114,5 @@ alias nnn='custom_nnn'
 # Wayland clipboard aliases
 alias clipcopy='wl-copy'
 alias clippaste='wl-paste'
+
+alias vi='$EDITOR'

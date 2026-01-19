@@ -1,5 +1,6 @@
 # Custom key bindings
 
+
 _bind_custom_keys () {
     # --- base commands (just typing, no execution) ---
 
@@ -41,11 +42,6 @@ _bind_custom_keys () {
     bindkey -s '\e.' "  cd ..\n"
     # --- Alt + z for interactively seach zoxide
     bindkey -s '\ez' "  zi\n"
-
-    # --- misc ---
-
-    # --- Ctrl + Backspace will delete a word (tilix does not do that natively)
-    bindkey "^H" backward-kill-word
 
 }
 _bind_custom_keys;
@@ -99,7 +95,6 @@ Basics:
 
     Alt-.          - cd ..
     Alt-f          - find . -name *
-    Ctrl+Backspace - delete word
     Ctrl+Z         - toggle suspend (^Z) / foreground (fg) last job
     Alt-z          - fuzzy search directory history (zoxide)
 
