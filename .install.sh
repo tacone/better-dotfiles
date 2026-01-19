@@ -83,6 +83,9 @@ PACKAGES=(
 
     # Dotfiles management
     "rcm"
+
+    # Directory jumping
+    "zoxide"
 )
 
 # AUR packages
@@ -231,6 +234,20 @@ if command_exists npm; then
     else
         echo "  ✓ all-the-package-names already installed"
     fi
+fi
+
+
+if command_exists zoxide; then
+    echo "📦 zoxide detected"
+    echo "# ============================================================================="
+    echo "# This file is auto-generated during .install.sh execution"
+    echo "# Do not edit it manually, changes will be overwritten"
+    echo
+    echo "# To update this file for a newer version, simply re-run .install.sh"
+    echo "# ============================================================================="
+    ZOX_FILE="$HOME/.dotfiles/.zsh.d/55-zoxide.zsh"
+    zoxide init zsh > "$ZOX_FILE"
+    echo "✅ zoxide initialization updated in $ZOX_FILE"
 fi
 
 echo ""
