@@ -47,3 +47,15 @@ bindkey -M menuselect "+" accept-and-menu-complete
 # --- options override
 
 unsetopt completealiases # enables alias completion
+
+# --- ignore history entries starting with a space (like oh-my-zsh)
+# If a command line begins with a space (one or more), don't save it to history.
+# This uses zsh's zshaddhistory hook; we define it only if it's not already present.
+if [[ -o interactive ]]; then
+  if ! typeset -f zshaddhistory >/dev/null 2>&1; then
+    zshaddhistory() {
+      [[ "$1" = ' '* ]] && return 1
+      return 0
+    }
+  fi
+fi
