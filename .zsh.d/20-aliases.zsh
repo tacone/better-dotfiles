@@ -110,3 +110,7 @@ alias filewatch9='FILEWATCH_SLEEP_TIME=9 noglob filewatch'
 alias filewatch10='FILEWATCH_SLEEP_TIME=10 noglob filewatch'
 
 alias nnn='custom_nnn'
+
+# Wayland clipboard aliases
+alias clipcopy='wl-copy'
+alias clippaste='wl-paste'
