@@ -70,11 +70,6 @@ NF () {
 
 # --- Shortcuts
 
-# --- Use "+"" to pick and autocompleted item without closing
-#     the completions menu
-# this doesn't seem to work anymore, without oh-my-zsh
-# bindkey -M menuselect "+" accept-and-menu-complete
-
 export _SEP='';
 multiline () {
 [ $_SEP ] && _SEP='' || _SEP='\\\n  ';

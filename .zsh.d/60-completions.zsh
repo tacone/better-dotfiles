@@ -9,34 +9,37 @@ zstyle ':completion:*:kill:*' force-list always
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 
-_create_symfony_console_completion() {
-    symfony_command_name=$1;
-    symfony_resolved_command=`whence $1`
-    local template=''
-
-    read -d -r template <<\EOF
-    _$symfony_command_name _get_command_list () {
-        $symfony_resolved_command ....no..ansi | sed "1,/Available commands/d" | awk '/^ +[a..z]+/ { print $1 }';
-        $symfony_resolved_command ....no..ansi | sed "1,/Available commands/d" | awk '/^ +[a..z]+/ { print $1 }';
-    }
-    _$symfony_command_name () {
-        compadd `_$symfony_command_name _get_command_list`;
-    }
-    compdef "_$symfony_command_name" $symfony_command_name;
-EOF
-
-    template=${template:gs/../-}
-    template=${template:gs/'$symfony_resolved_command'/$symfony_resolved_command}
-    template=${template:gs/'$symfony_command_name'/$symfony_command_name}
-    template=${template:gs/' _get_command_list'/_get_command_list}
-
-    eval $template
-}
-
-_create_symfony_console_completion phpcomposer
-_create_symfony_console_completion artisan
-
 autoload -U compaudit compinit
+
+# # Enable browsable (arrow-key) tab completions (similar to Oh My Zsh)
+# zmodload -i zsh/complist
+# WORDCHARS=''
+# unsetopt menu_complete
+# setopt auto_menu complete_in_word always_to_end
+# zstyle ':completion:*' menu select
+# zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'r:|=*' 'l:|=* r:|=*'
+
+# Enable browsable (arrow-key) tab-completions
+autoload -Uz compinit && compinit
+zmodload -i zsh/complist
+
+# safer completion behavior
+WORDCHARS=''
+unsetopt menu_complete
+setopt auto_menu complete_in_word always_to_end
+
+# use menu select (allows arrow keys to navigate)
+zstyle ':completion:*:*:*:*:*' menu select
+zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'r:|=*' 'l:|=* r:|=*'
+
+# optional: enable caching (adjust $ZSH_CACHE_DIR if you use Oh My Zsh)
+# zstyle ':completion:*' use-cache on
+# zstyle ':completion:*' cache-path ~/.cache/zsh
+
+# --- Use "+"" to pick and autocompleted item without closing
+#     the completions menu
+# this doesn't seem to work anymore, without oh-my-zsh
+bindkey -M menuselect "+" accept-and-menu-complete
 
 # bun completions
 [ -s "/home/tacone/.bun/_bun" ] && source "/home/tacone/.bun/_bun"

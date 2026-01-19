@@ -69,6 +69,17 @@ alias -g @json='| jq'
 
 alias package-json='echo; cat $(parent-find package.json) | yq eval -P'
 
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+alias .......='cd ../../../../../..'
+alias ........='cd ../../../../../../..'
+alias .........='cd ../../../../../../../..'
+alias ..........='cd ../../../../../../../../..'
+alias ...........='cd ../../../../../../../../../..'
+
 # --- easy xargs
 alias -g »='| xargs -n1 -d "\n"'
 alias -g »»='| xargs -n1 -I{} -d "\n"'
@@ -79,6 +90,7 @@ alias -g §=' | grep -i '
 alias sudo='sudo '
 
 [[ -s "/etc/grc.conf" ]] && alias ll='grc --colour=auto ls -lh --color=always --hyperlink=always'
+alias l='ls -lha --color=auto'
 alias dmesg='dmesg --reltime --color'
 type "code-insiders" > /dev/null && alias code=code-insiders
 
