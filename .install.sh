@@ -86,6 +86,11 @@ PACKAGES=(
 
     # Directory jumping
     "zoxide"
+
+    # hyprpm dependencies
+    "meson"
+    "cpio"
+    "cmake"
 )
 
 # AUR packages
