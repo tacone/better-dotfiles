@@ -89,7 +89,10 @@ _show_keybindings() {
 
 Available keybindings:
 
-Alt-k          - show this help
+Help:
+
+    Alt-k          - show this help
+    Alt-h          - run-help (man page for current command)
 
 Basics:
 
@@ -99,8 +102,8 @@ Basics:
     Alt-z          - fuzzy search directory history (zoxide)
 
 Utils:
+
     Alt-e          - open CLI file manager (nnn)
-    Alt-H          - run-help (man page for current command)
 
 Git:
 
