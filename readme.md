@@ -16,9 +16,8 @@ Roadmap:
 
 [x] Migrate remaining oh-my-zsh plugins and behaviours to custom scripts.
 [ ] Double check oh-my-zsh migration
-[~] Investigating: added `bin/test-hyperlink` to reproduce OSC 8 link clicking — run it and report results
 [ ] Hyprland: disable focus follows mouse
-[ ] Add more files to versioning (hyprland config, ...).
+[ ] Add more files to versioning (the Omarchy user defined files: hyprland config, ...).
 [ ] Change Hyprland keybindings to match the previous dotfiles (mostly vim-like navigation).
 [ ] Add battery indicator to Waybar
 [ ] Add Hyprscroll

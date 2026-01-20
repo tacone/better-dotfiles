@@ -3,43 +3,55 @@
 alias git-ls='git ls-tree -r $(git rev-parse --abbrev-ref HEAD) --name-only'
 alias find='noglob find'
 
+# File system
+if command -v eza &> /dev/null; then
+    alias ls='eza -lh --group-directories-first --icons=auto --hyperlink'
+    alias lt='eza --tree --level=2 --long --icons --git'
+    alias lta='lt -a'
+else
+    [[ -s "/etc/grc.conf" ]] && alias ls='grc --colour=on ls --hyperlink=always' || alias ls='ls --color=auto --hyperlink=always'
+fi
+
+alias lsa='ls -a'
+alias ll='ls -lh'
+alias l='ls -lha'
+
+
+
 parent-find() {
-  local file="$1"
-  local dir="${2:-$(pwd)}"
+    local file="$1"
+    local dir="${2:-$(pwd)}"
 
-  while [[ "$dir" != "/" ]]; do
-    if [[ -e "$dir/$file" ]]; then
-      echo "$dir/$file"
-      return 0
+    while [[ "$dir" != "/" ]]; do
+        if [[ -e "$dir/$file" ]]; then
+            echo "$dir/$file"
+            return 0
+        fi
+        dir="$(dirname "$dir")"
+    done
+
+    # Check the root directory as a last resort
+    if [[ -e "/$file" ]]; then
+        echo "/$file"
+        return 0
     fi
-    dir="$(dirname "$dir")"
-  done
 
-  # Check the root directory as a last resort
-  if [[ -e "/$file" ]]; then
-    echo "/$file"
-    return 0
-  fi
-
-  return 1
+    return 1
 }
 
-alias €='noglob €'
-alias €€='noglob €€'
+alias csv='column -n -s -t'
 
-alias csv='column -n -s , -t'
 type yq > /dev/null && alias yq='yq -C'
-
 alias qr='qrencode -t utf8 -m2'
 
 # output everything before a string (not included)
 before() {
-	grep -i -B10000 "$@" | head -n -1
+    grep -i -B10000 "$@" | head -n -1
 }
 
 # output everything adter a string (not included)
 after() {
-	grep -i -A10000 "$@" | tail -n +2
+    grep -i -A10000 "$@" | tail -n +2
 }
 
 # remove empty lines
@@ -51,7 +63,6 @@ alias trim='sed "s/\(^ *\| *\$\)//g"'
 alias sum-of='xargs | sed -e "s/\\ /+/g" | bc'
 
 alias x='xdg-open'
-alias test-hyperlink='$HOME/.dotfiles/bin/test-hyperlink'
 
 alias add-alias='echo "Please insert the new alias:"; read string; echo alias ${string} >> $HOME/.aliases; source $HOME/.aliases'
 alias edit-alias='$EDITOR $HOME/.aliases; source $HOME/.aliases'
@@ -90,10 +101,8 @@ alias -g §=' | grep -i '
 
 alias sudo='sudo '
 
-[[ -s "/etc/grc.conf" ]] && alias ll='grc --colour=auto ls -lh --color=always --hyperlink=always'
-alias l='ls -lha --color=auto'
 alias dmesg='dmesg --reltime --color'
-type "code-insiders" > /dev/null && alias code=code-insiders
+# type "code-insiders" > /dev/null && alias code=code-insiders
 
 alias artisan='php artisan'
 
@@ -116,4 +125,4 @@ alias nnn='custom_nnn'
 alias clipcopy='wl-copy'
 alias clippaste='wl-paste'
 
-alias vi='$EDITOR'
+type "nvim" > /dev/null && alias vi='nvim'
