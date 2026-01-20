@@ -30,14 +30,22 @@
   opacity: 0.5;
 }
 
+#workspaces button.active {
+  font-weight: 900;
+}
+
+/* #battery, */
 #cpu,
-#battery,
 #pulseaudio,
 #custom-omarchy,
 #custom-screenrecording-indicator,
 #custom-update {
   min-width: 12px;
   margin: 0 7.5px;
+}
+
+#memory, #battery {
+  opacity: 0.5;
 }
 
 #tray {
