@@ -31,6 +31,7 @@ setopt auto_menu complete_in_word always_to_end
 # use menu select (allows arrow keys to navigate)
 zstyle ':completion:*:*:*:*:*' menu select
 zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 # optional: enable caching (adjust $ZSH_CACHE_DIR if you use Oh My Zsh)
 # zstyle ':completion:*' use-cache on

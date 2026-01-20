@@ -41,6 +41,8 @@ bindkey '\e[3~' delete-char # Delete key
 bindkey '^[[3;5~' kill-word # Ctrl + Delete
 bindkey "^H" backward-kill-word
 
+bindkey '^[[27;2;13~' accept-and-hold # Shift + Enter
+
 # Load plugins manually
 # plugins=(z colored-man-pages nmap command-not-found httpie magic-enter)
 plugins=(colored-man-pages command-not-found git httpie grc magic-enter nmap zsh-syntax-highlighting)

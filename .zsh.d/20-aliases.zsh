@@ -51,6 +51,7 @@ alias trim='sed "s/\(^ *\| *\$\)//g"'
 alias sum-of='xargs | sed -e "s/\\ /+/g" | bc'
 
 alias x='xdg-open'
+alias test-hyperlink='$HOME/.dotfiles/bin/test-hyperlink'
 
 alias add-alias='echo "Please insert the new alias:"; read string; echo alias ${string} >> $HOME/.aliases; source $HOME/.aliases'
 alias edit-alias='$EDITOR $HOME/.aliases; source $HOME/.aliases'

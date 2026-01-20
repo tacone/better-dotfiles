@@ -10,6 +10,8 @@ bindkey -e
 zstyle :compinstall filename '/home/tacone/.zshrc'
 
 autoload -Uz compinit
+autoload -Uz colors && colors # needed to get color support
+
 compinit
 # End of lines added by compinstall
 
