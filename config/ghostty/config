@@ -1,11 +1,13 @@
 # Default background
-background = "#000000"
+# background = "#000000"
 
 # Default opacity
-background-opacity = 0.9
+# background-opacity = 0.7
 
 # Dynamic theme colors
 config-file = ?"~/.config/omarchy/current/theme/ghostty.conf"
+
+# config-file = "~/.config/ghostty/black-background.conf"
 
 # Font
 font-family = "JetBrainsMono Nerd Font"
