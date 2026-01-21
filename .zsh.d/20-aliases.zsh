@@ -92,6 +92,12 @@ alias .........='cd ../../../../../../../..'
 alias ..........='cd ../../../../../../../../..'
 alias ...........='cd ../../../../../../../../../..'
 
+# Directory stack navigation (oh-my-zsh style)
+alias d='dirs -v'
+for i in {1..9}; do
+    alias $i="cd -$i"
+done
+
 # --- easy xargs
 alias -g »='| xargs -n1 -d "\n"'
 alias -g »»='| xargs -n1 -I{} -d "\n"'

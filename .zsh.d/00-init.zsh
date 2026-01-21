@@ -23,6 +23,9 @@ MAGIC_ENTER_GIT_COMMAND="gst"
 # Preferred editor for local and remote sessions
 export EDITOR='nvim'
 
+# Zsh options
+setopt AUTO_PUSHD
+
 # ------------------------------------------------------------
 # Basic eyboard funcionality
 # ------------------------------------------------------------
