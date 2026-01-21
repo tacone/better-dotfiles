@@ -18,13 +18,15 @@ Roadmap:
 [ ] Double check oh-my-zsh migration
 [x] Hyprland: disable focus follows mouse
 [x] Add more files to versioning (the Omarchy user defined files: hyprland config, ...).
-[ ] Change Hyprland keybindings to match the previous dotfiles (mostly vim-like navigation).
+[x] Change Hyprland keybindings to match the previous dotfiles (mostly vim-like navigation).
+[x] Change Hyprland keybindings - Part 2 (resizing, killing, closing)
 [x] Add battery indicator to Waybar
 [ ] Add low battery notification
 [ ] Fix Alt+c conflict (wc -l and fzf cd)
-[ ] Configure ghostty keybindings
+[x] Configure ghostty keybindings
 [x] Figure out a way to get a reboot/logout menu (Omarchy style).
 [ ] Investigate Dank Linux (https://danklinux.com/)
+[ ] Super + Ctrl + X to kill a window
 
 ## Getting started
 
