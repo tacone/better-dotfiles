@@ -1,3 +1,9 @@
+# Default background
+background = "#000000"
+
+# Default opacity
+background-opacity = 0.9
+
 # Dynamic theme colors
 config-file = ?"~/.config/omarchy/current/theme/ghostty.conf"
 
