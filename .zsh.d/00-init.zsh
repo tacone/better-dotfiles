@@ -41,6 +41,10 @@ bindkey '\e[3~' delete-char # Delete key
 bindkey '^[[3;5~' kill-word # Ctrl + Delete
 bindkey "^H" backward-kill-word
 
+# Ctrl + Right/Left navigation
+bindkey '^[[1;5C' forward-word # Ctrl + Right
+bindkey '^[[1;5D' backward-word # Ctrl + Left
+
 bindkey '^[[27;2;13~' accept-and-hold # Shift + Enter
 
 # Load plugins manually
