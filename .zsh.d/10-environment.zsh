@@ -43,6 +43,7 @@ function add-path (){
 alias edit-path='$EDITOR $HOME/.paths; eval $_refresh_paths'
 
 export PATH=./scripts:/home/stefano/.local/bin:$PATH
+export PATH="$HOME/.local/share/omarchy/bin:$PATH"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
