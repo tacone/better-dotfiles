@@ -27,6 +27,7 @@ Roadmap:
 [x] Figure out a way to get a reboot/logout menu (Omarchy style).
 [ ] Investigate Dank Linux (https://danklinux.com/)
 [ ] Super + Ctrl + X to kill a window
+[ ] Add sudo shortcut to neovim
 
 ## Getting started
 
