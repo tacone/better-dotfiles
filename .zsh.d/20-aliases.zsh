@@ -131,4 +131,9 @@ alias nnn='custom_nnn'
 alias clipcopy='wl-copy'
 alias clippaste='wl-paste'
 
+
+alias n='nvim'
+
+# nvim wins over vim
+type "vim" > /dev/null && alias vi='vim'
 type "nvim" > /dev/null && alias vi='nvim'
