@@ -115,8 +115,16 @@ function kill-port() {
     find-port $1 2> /dev/null | awk '{print $2}' | xargs sudo kill ${@:2}
 }
 
+__github_cli=$(which gh 2> /dev/null)
 function gh() {
-    git clone git@github.com:${1}.git ${@:2}
+    if [[ $1 =~ ^[^/]+/[^/]+$ ]]; then
+        git clone git@github.com:${1}.git ${@:2}
+    elif [[ -n "$__github_cli" ]]; then
+        $__github_cli "$@"
+    else
+        # make it fail normally
+        gh "$@"
+    fi
 }
 
 function gitignore.io() {
