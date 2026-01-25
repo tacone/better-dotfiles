@@ -91,6 +91,9 @@ PACKAGES=(
     "meson"
     "cpio"
     "cmake"
+
+    # development tools
+    "mkcert"
 )
 
 # AUR packages
