@@ -14,6 +14,8 @@ _bind_custom_keys () {
     bindkey -s '\eX' $_SEP' | xargs -n1 -d "\\n" -I {} '
     # --- Alt + f to find -name
     bindkey -s '\ef' 'find . -name *'
+    # --- Alt + Shift + f to ff
+    bindkey -s '\eF' 'ff '
     # --- Alt + s to sed -s s///g
     bindkey -s '\es' $_SEP' | sed -s '\''s///g'\'
     # --- Alt + t to print timestamp
@@ -75,10 +77,12 @@ local FZF_KEYBINDINGS=''
 
 if [[ -f /usr/share/fzf/key-bindings.zsh ]]; then
     FZF_KEYBINDINGS=$(cat <<'FZFB'
-Ctrl+T         - Paste selected file path(s) into the command line.
-Ctrl+R         - Fuzzy-search shell history and paste the selected entry.
-Alt+C          - Select a directory with fzf and cd into it.
-Alt+R          - Redraw the current line (used to refresh prompt after fzf).
+    Ctrl+T              - Paste selected file path(s) into the command line.
+    Ctrl+R              - Fuzzy-search shell history and paste the selected entry.
+    Alt+C               - Select a directory with fzf and cd into it.
+    Alt+R               - Redraw the current line (used to refresh prompt after fzf).
+    Alt + Shift + f     - fuzzy find files (ff)
+
 FZFB
 )
 fi
@@ -91,44 +95,45 @@ Available keybindings:
 
 Help:
 
-    Alt-k          - show this help
-    Alt-h          - run-help (man page for current command)
+    Alt + k             - show this help
+    Alt + h             - run-help (man page for current command)
 
 Basics:
 
-    Alt-.          - cd ..
-    Alt-f          - find . -name *
-    Ctrl+Z         - toggle suspend (^Z) / foreground (fg) last job
-    Alt-z          - fuzzy search directory history (zoxide)
+    Alt + .             - cd ..
+    Alt + f             - find . -name *
+    Ctrl+z              - toggle suspend (^Z) / foreground (fg) last job
+Alt + z                 - fuzzy search directory history (zoxide)
 
 Utils:
 
-    Alt-e          - open CLI file manager (nnn)
+    Alt + e             - open CLI file manager (nnn)
 
 Git:
 
-    Alt-l          - write git log (glol)
-    Alt-L          - write git log --all (glola)
-    Alt-o          - git checkout
-    Alt-d - git diff
-    Alt+D          - git diff --cached
+    Alt + l             - write git log (glol)
+    Alt + Shift + l     - write git log --all (glola)
+    Alt + o             - git checkout
+    Alt + d             - git diff
+    Alt + Shift + l     - git diff --cached
 
 Quick chaining:
 
-    Alt-g          - add | grep -i to the current command
-    Alt-x / Alt-X  - add | xargs -n1 -d "\n" to the current command
-    Alt-s          - add | sed s///g to the current command
-    Alt-t          - add timestamp to the current command
-    Alt-c          - add | wc -l to the current command
-    Alt-u          - add | sort -u to the current command
-    Alt-y          - add @yml to the current command (pretty print yaml)
-    Alt-j          - add @json to the current command (pretty print json)
-    Alt-S          - insert sudo at the beginning of the current command
-    Alt-w          - insert watch at the beginning of the current command
+    Alt + g             - add | grep -i to the current command
+    Alt + x             - add | xargs -n1 -d "\n" to the current command
+    Alt + Shift + x     - add | xargs -n1 -d "\n" -I {} to the current command
+    Alt + s             - add | sed s///g to the current command
+    Alt + t             - add timestamp to the current command
+    Alt + c             - add | wc -l to the current command
+    Alt + u             - add | sort -u to the current command
+    Alt + y             - add @yml to the current command (pretty print yaml)
+    Alt + j             - add @json to the current command (pretty print json)
+    Alt + Shift + S     - insert sudo at the beginning of the current command
+    Alt + w             - insert watch at the beginning of the current command
 
 KEYS
     if [[ -n "$FZF_KEYBINDINGS" ]]; then
-        echo Fuzzy Finder (fzf):
+        echo 'Fuzzy Finder (fzf):'
         echo
         echo "$FZF_KEYBINDINGS"
     fi
@@ -137,7 +142,7 @@ KEYS
 
 
 # bind a key to show keybindings (Alt+k)
-bindkey -s '\ek' '_show_keybindings\n'
+bindkey -s '\ek' '  _show_keybindings\n'
 
 # ^Z to foreground the last suspended job.
 foreground-current-job() { fg; }
