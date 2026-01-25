@@ -15,6 +15,9 @@ autoload -Uz colors && colors # needed to get color support
 compinit
 # End of lines added by compinstall
 
+__omarchy_functions=~/.local/share/omarchy/default/bash/functions
+[[ -f $__omarchy_functions ]] && source $__omarchy_functions
+
 
 for config_file ($HOME/.dotfiles/.zsh.d/*.zsh); do
   source $config_file
