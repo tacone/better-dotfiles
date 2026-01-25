@@ -62,8 +62,6 @@ alias trim='sed "s/\(^ *\| *\$\)//g"'
 
 alias sum-of='xargs | sed -e "s/\\ /+/g" | bc'
 
-alias x='xdg-open'
-
 alias add-alias='echo "Please insert the new alias:"; read string; echo alias ${string} >> $HOME/.aliases; source $HOME/.aliases'
 alias edit-alias='$EDITOR $HOME/.aliases; source $HOME/.aliases'
 
@@ -92,11 +90,9 @@ alias .........='cd ../../../../../../../..'
 alias ..........='cd ../../../../../../../../..'
 alias ...........='cd ../../../../../../../../../..'
 
-# Directory stack navigation (oh-my-zsh style)
-alias d='dirs -v'
-for i in {1..9}; do
-    alias $i="cd -$i"
-done
+# Fuzzy finder with bat preview
+alias ff="fzf --preview 'bat --style=numbers --color=always {}'"
+
 
 # --- easy xargs
 alias -g »='| xargs -n1 -d "\n"'
@@ -131,9 +127,25 @@ alias nnn='custom_nnn'
 alias clipcopy='wl-copy'
 alias clippaste='wl-paste'
 
-
-alias n='nvim'
-
 # nvim wins over vim
 type "vim" > /dev/null && alias vi='vim'
 type "nvim" > /dev/null && alias vi='nvim'
+
+
+open() {
+  xdg-open "$@" >/dev/null 2>&1 &
+}
+
+# One letter shortcuts
+
+alias c='opencode'
+alias d='docker'
+n() { if [ "$#" -eq 0 ]; then nvim .; else nvim "$@"; fi; }
+# Directory stack navigation (oh-my-zsh style)
+alias d='dirs -v'
+for i in {1..9}; do
+    alias $i="cd -$i"
+done
+alias x='xdg-open' # duplicate of `open` (but worst)
+
+
