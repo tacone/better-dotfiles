@@ -105,56 +105,24 @@ A few examples:
 
 ## Enhanced Git
 
-First off, we are importing oh-my-zsh git plugin (so you get the very same
+First off, we are importing the oh-my-zsh git plugin (so you get the very same
 aliases).
 
 In the CLI:
 
 - Press Enter to run git status in any git repository (with clickable links to
-  the online branch on GitHub/GitLab/Azure).
+  the online branch on GitHub/GitLab/Azure)
 - Press Alt+L to run git log (Alt+Shift+L for git log --all), with clickable
-  commit links.
+  commit links
 - Press Alt+D to run git diff, with clickable commit links (Alt+Shift+D for git
-  diff --cached).
-- Press Alt+O to run git checkout (Alt+Shift+O for git checkout -b), with
-  clickable branch links.
+  diff --cached)
+- Press Alt+O to write "git checkout" on the current command line
 
 ![Git Log with clickable commit links](.screenshots/git-links.png)
 
-## Debugging Control+Click (OSC 8 hyperlinks) 🔧
-
-Quick test:
-
-1. Run `./bin/test-hyperlink` and try clicking the printed link with different
-   modifiers (Left, Ctrl, Shift, Alt).
-2. If it opens: your terminal supports OSC 8 and clicks are working.
-3. If it doesn't: check these possibilities:
-   - Determine your terminal emulator: `echo $TERM` and check running processes:
-     `ps -e | grep -E 'kitty|alacritty|wezterm|gnome-terminal|foot|st|xterm'`.
-   - Terminal settings: ensure URL-click / OSC 8 link-clicking is enabled
-     (kitty/wezterm/gnome-terminal settings vary).
-   - Multiplexers: disable tmux mouse mode (`tmux set -g mouse off`) to test
-     pass-through behavior.
-   - Compositor/key bindings: ensure Hyprland or other compositor isn't
-     intercepting Ctrl+Click.
-   - Key remapping: check `keyd` or other remaps which may affect Ctrl
-     modifiers.
-4. Still failing? Run `./bin/test-hyperlink` and `echo $TERM` and open an issue
-   with both outputs and a short description.
-
 We import the oh-my-zsh git plugin (so you get the very same aliases).
 
-## Usage examples
-
-- `git log` (or your existing `git log` alias) — enhanced log with clickable
-  commit links.
-- `git status` — prints branch banner with link to repository/branch.
-- `git push` (via replaced alias) — prints link to pipelines page.
-
-## Zoxide integration
-
-If you use zoxide, `./.install.sh` will initialize it for zsh automatically. Run
-`./.install.sh` anytime to regenerate the initialization file.
+## Zoxide
 
 You can use fuzzy seach zoxinde using Alt+z or use it as usual, for example:
 
@@ -188,13 +156,14 @@ Roadmap:
 
 - [x] Migrate remaining oh-my-zsh plugins and behaviours to custom scripts
 - [x] Hyprland: disable focus follows mouse
-- [x] Add more files to versioning (the Omarchy user defined files: hyprland config, ...).
-- [x] Change Hyprland keybindings to match the previous dotfiles (mostly vim-like navigation).
+- [x] Add more files to versioning (the Omarchy user defined files: hyprland
+      config, ...).
+- [x] Change Hyprland keybindings to match the previous dotfiles (mostly
+      vim-like navigation).
 - [x] Change Hyprland keybindings - Part 2 (resizing, killing, closing)
 - [x] Add battery indicator to Waybar
 - [ ] Add low battery notification
-- [ ] Fix Alt+c
-- conflict (wc -l and fzf cd)
+- [ ] Fix Alt+c conflict (wc -l and fzf cd)
 - [x] Configure ghostty keybindings
 - [ ] Configure kitty keybindings
 - [x] Figure out a way to get a reboot/logout menu (Omarchy style).
