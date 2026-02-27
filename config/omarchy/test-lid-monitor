@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Test lid monitor functionality
+echo "Lid Monitor Status:"
+if pgrep -f "lid-monitor.sh" > /dev/null; then
+    echo "✓ Lid monitor is running"
+    echo "  PID: $(pgrep -f 'lid-monitor.sh' | head -1)"
+else
+    echo "✗ Lid monitor is not running"
+    echo "  Start it with: ~/.config/omarchy/lid-monitor.sh &"
+fi
+
+echo ""
+echo "Lid state detection:"
+if [ -f /proc/acpi/button/lid/LID/state ]; then
+    echo "  ACPI lid state: $(cat /proc/acpi/button/lid/LID/state)"
+elif [ -d /sys/class/power_supply ]; then
+    echo "  Checking power_supply devices..."
+    found=false
+    for device in /sys/class/power_supply/*/type; do
+        if [ -f "$device" ] && grep -q "Lid" "$device" 2>/dev/null; then
+            state_file="${device%/type}/state"
+            if [ -f "$state_file" ]; then
+                echo "  Lid state: $(cat "$state_file")"
+                found=true
+            fi
+        fi
+    done
+    if [ "$found" = false ]; then
+        echo "  No lid device found in power_supply"
+    fi
+else
+    echo "  No lid detection method available"
+fi
+
+echo ""
+echo "Usage:"
+echo "  Close your laptop lid to test suspend functionality"
+echo "  Toggle with: ~/.config/omarchy/toggle-lid-monitor"

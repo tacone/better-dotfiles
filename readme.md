@@ -170,3 +170,5 @@ Roadmap:
 - [ ] Investigate Dank Linux <https://danklinux.com/>
 - [ ] Super + Ctrl + X to kill a window
 - [ ] Add sudo shortcut to neovim
+- [ ] Add a copilot GPT 4.1 read-only alias/keybinding for human and AI use
+  - [ ] add a way to insert output in the current command line

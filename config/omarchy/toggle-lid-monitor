@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Toggle lid monitor script
+SCRIPT="$HOME/.config/omarchy/lid-monitor.sh"
+AUTOSTART="$HOME/.config/hypr/autostart.conf"
+
+if pgrep -f "lid-monitor.sh" > /dev/null; then
+    # Stop the monitor
+    pkill -f "lid-monitor.sh"
+    echo "Lid monitor disabled"
+    
+    # Remove from autostart
+    if grep -q "lid-monitor.sh" "$AUTOSTART"; then
+        sed -i '/lid-monitor.sh/d' "$AUTOSTART"
+    fi
+else
+    # Start the monitor
+    "$SCRIPT" &
+    echo "Lid monitor enabled"
+    
+    # Add to autostart if not already there
+    if ! grep -q "lid-monitor.sh" "$AUTOSTART"; then
+        echo "# User-level lid close monitor - suspends even when docked" >> "$AUTOSTART"
+        echo "exec-once = ~/.config/omarchy/lid-monitor.sh" >> "$AUTOSTART"
+    fi
+fi
