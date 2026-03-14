@@ -1,4 +1,3 @@
-alias g="git commit -m"
 alias zshrc='code ~/.zshrc'
 alias -g each='-print0 | xargs -0 -I {}'
 alias youtube-dl='youtube-dl --embed-thumbnail -x -i --audio-format=mp3'

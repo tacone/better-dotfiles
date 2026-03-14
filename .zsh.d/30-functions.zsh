@@ -173,3 +173,26 @@ ask-yn()
         esac
     done
 }
+
+
+# Git commit with optional message
+unalias g
+g() {
+    if [[ "$#" -gt 0 ]]; then
+        git commit -m "$@"
+    else
+        git commit
+    fi
+}
+
+unalias gg
+gg() {
+    # Check if there are staged changes
+    if git diff --cached --quiet; then
+        echo "No staged changes to commit"
+        return 1
+    fi
+    local prompt="Write a git commit message on staged changes. Don't include co-author. Only output the commit message, nothing else."
+    local message=$(gh copilot -p "$prompt" --model=claude-haiku-4.5 --silent 2> >(tee /dev/tty >&2))
+    git commit -m "$message" -e
+}
