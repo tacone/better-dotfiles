@@ -1,0 +1,9 @@
+{
+  "sessionId": "14530cfb-a13a-4a87-b671-9245b0c44c36",
+  "model": "claude-haiku-4.5",
+  "workdir": "/home/tacone/.dotfiles",
+  "sessionDir": "/home/tacone/.dotfiles/.copilot-sessions/14530cfb-a13a-4a87-b671-9245b0c44c36",
+  "chatLog": "/home/tacone/.dotfiles/.copilot-sessions/14530cfb-a13a-4a87-b671-9245b0c44c36/chat.log",
+  "logDir": "/home/tacone/.dotfiles/.copilot-sessions/14530cfb-a13a-4a87-b671-9245b0c44c36/debug-logs",
+  "created": "2026-02-27T20:00:53.746Z"
+}
