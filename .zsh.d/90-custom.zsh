@@ -70,8 +70,8 @@ command_not_found_handler() {
         printf 'Do you want to Install package %s? (y/N) ' $pkgname
         if read -q "choice? "; then
                 echo
-                echo "Executing command: pamac install --no-upgrade $pkgname"
-                pamac install --no-upgrade $pkgname
+                echo "Executing command: yay -S $pkgname"
+                yay -S $pkgname
         else
                 echo " "
         fi
