@@ -24,6 +24,10 @@ _bind_custom_keys () {
     bindkey -s '\ec' $_SEP' | wc -l'
     # --- Alt + o to git checkout
     bindkey -s '\eo' 'git checkout '
+    # --- Alt + p to git push
+    bindkey -s '\ep' 'git push '
+    # --- Alt + Shift + p to git push & + Return
+    bindkey -s '\eP' 'git push &\n'
     # --- Alt + u to sort -u
     bindkey -s '\eu' $_SEP' | sort -u'
     # --- Alt + y to @yml
@@ -114,6 +118,8 @@ Git:
     Alt + l             - write git log (glol)
     Alt + Shift + l     - write git log --all (glola)
     Alt + o             - git checkout
+    Alt + p             - git push
+    Alt + Shift + p     - git push & <return>
     Alt + d             - git diff
     Alt + Shift + l     - git diff --cached
 
