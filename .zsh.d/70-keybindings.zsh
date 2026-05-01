@@ -17,7 +17,7 @@ _bind_custom_keys () {
     # --- Alt + Shift + f to ff
     bindkey -s '\eF' 'ff '
     # --- Alt + s to sed -s s///g
-    bindkey -s '\es' $_SEP' | sed -s '\''s///g'\'
+    bindkey -s '\eS' $_SEP' | sed -s '\''s///g'\'
     # --- Alt + t to print timestamp
     bindkey -s '\et' '$(timestamp)'
     # --- Alt + c to count with wc -l
@@ -25,11 +25,11 @@ _bind_custom_keys () {
     # --- Alt + o to git checkout
     bindkey -s '\eo' 'git checkout '
     # --- Alt + p to git push
-    bindkey -s '\ep' 'git push '
-    # --- Alt + Shift + p to git push & + Return
-    bindkey -s '\eP' 'git push &\n'
-    # --- Alt + u to sort -u
-    bindkey -s '\eu' $_SEP' | sort -u'
+    bindkey -s '\ep' 'git push\n'
+    # --- Alt + u to git pull
+    bindkey -s '\eu' 'git pull\n'
+    # --- Alt + Shift + u to sort -u
+    bindkey -s '\eU' $_SEP' | sort -u'
     # --- Alt + y to @yml
     bindkey -s '\ey' $_SEP' @yml'
     # --- Alt + j to @json
@@ -64,7 +64,15 @@ insert_sudo () {
     CURSOR=$(($CURSOR + $#prefix + 1))
 }
 zle -N insert-sudo insert_sudo
-bindkey "^[S" insert-sudo
+bindkey "^[s" insert-sudo
+
+insert_bat () {
+    local prefix="bat"
+    BUFFER="$prefix $BUFFER"
+    CURSOR=$(($CURSOR + $#prefix + 1))
+}
+zle -N insert-bat insert_bat
+bindkey "^[b" insert-bat
 
 # Alt + w to insert watch at the beginning of the line
 
@@ -115,26 +123,26 @@ Utils:
 
 Git:
 
+    Alt + d             - git diff
+    Alt + Shift + d     - git diff --cached
     Alt + l             - write git log (glol)
     Alt + Shift + l     - write git log --all (glola)
     Alt + o             - git checkout
     Alt + p             - git push
-    Alt + Shift + p     - git push & <return>
-    Alt + d             - git diff
-    Alt + Shift + l     - git diff --cached
+    Alt + u             - git pull
 
 Quick chaining:
 
+    Alt + c             - add | wc -l to the current command
     Alt + g             - add | grep -i to the current command
+    Alt + t             - add timestamp to the current command
+    Alt + j             - add @json to the current command (pretty print json)
+    Alt + y             - add @yml to the current command (pretty print yaml)
+    Alt + s             - insert sudo at the beginning of the current command
+    Alt + Shift + s     - add | sed s///g to the current command
+    Alt + u             - add | sort -u to the current command
     Alt + x             - add | xargs -n1 -d "\n" to the current command
     Alt + Shift + x     - add | xargs -n1 -d "\n" -I {} to the current command
-    Alt + s             - add | sed s///g to the current command
-    Alt + t             - add timestamp to the current command
-    Alt + c             - add | wc -l to the current command
-    Alt + u             - add | sort -u to the current command
-    Alt + y             - add @yml to the current command (pretty print yaml)
-    Alt + j             - add @json to the current command (pretty print json)
-    Alt + Shift + S     - insert sudo at the beginning of the current command
     Alt + w             - insert watch at the beginning of the current command
 
 KEYS
