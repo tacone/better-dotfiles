@@ -2,6 +2,9 @@
 HISTFILE=~/.histfile
 HISTSIZE=100000
 SAVEHIST=100000
+setopt INC_APPEND_HISTORY   # write each command to histfile immediately
+setopt HIST_IGNORE_DUPS     # don't save duplicate consecutive entries
+setopt HIST_REDUCE_BLANKS   # remove extra blanks
 setopt autocd extendedglob
 unsetopt beep
 bindkey -e
@@ -22,3 +25,5 @@ __omarchy_functions=~/.local/share/omarchy/default/bash/functions
 for config_file ($HOME/.dotfiles/.zsh.d/*.zsh); do
   source $config_file
 done
+
+[[ -f $HOME/.zsh.local ]] && source $HOME/.zsh.local
