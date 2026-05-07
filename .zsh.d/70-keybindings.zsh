@@ -140,7 +140,7 @@ Quick chaining:
     Alt + y             - add @yml to the current command (pretty print yaml)
     Alt + s             - insert sudo at the beginning of the current command
     Alt + Shift + s     - add | sed s///g to the current command
-    Alt + u             - add | sort -u to the current command
+    Alt + Shift + u     - add | sort -u to the current command
     Alt + x             - add | xargs -n1 -d "\n" to the current command
     Alt + Shift + x     - add | xargs -n1 -d "\n" -I {} to the current command
     Alt + w             - insert watch at the beginning of the current command
