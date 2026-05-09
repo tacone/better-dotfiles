@@ -196,3 +196,11 @@ gg() {
     local message=$(gh copilot -p "$prompt" --model=claude-haiku-4.5 --silent 2> >(tee /dev/tty >&2))
     git commit -m "$message" -e
 }
+
+ask() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: ask \"your question\"" >&2
+        return 1
+    fi
+    OPENCODE_CONFIG_CONTENT='{"permission":{"edit":"deny","bash":"deny"}}' opencode run "$*"
+}
