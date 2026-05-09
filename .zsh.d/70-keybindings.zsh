@@ -36,7 +36,8 @@ _bind_custom_keys () {
     bindkey -s '\ej' $_SEP' @json'
     # --- Alt + e to nnnn
     bindkey -s '\ee' $_SEP'  nnn -cH\n'
-
+    # --- Alt + h to insert --help
+    bindkey -s '\eh' ' --help'
 
     # --- instant commands (will execute immediately) ---
 
@@ -52,9 +53,10 @@ _bind_custom_keys () {
 }
 _bind_custom_keys;
 
-# --- Alt + H to access the man page of the current command
-# (ex: git commit<Esc+h>)
+# --- Alt + Shift + H to access the man page of the current command
+# (ex: git commit<Alt+Shift+h>)
 autoload run-help
+bindkey '\eH' run-help
 
 # Alt+S to insert sudo at the beginning of the line
 
@@ -108,7 +110,8 @@ Available keybindings:
 Help:
 
     Alt + k             - show this help
-    Alt + h             - run-help (man page for current command)
+    Alt + h             - insert --help on the current line
+    Alt + Shift + h     - run-help (man page for current command)
 
 Basics:
 
