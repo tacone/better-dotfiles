@@ -41,6 +41,8 @@ _bind_custom_keys () {
 
     # --- instant commands (will execute immediately) ---
 
+    # --- Alt + Shift + c to invoke opencode
+    bindkey -s '\eC' "  opencode\n"
     # --- Alt + d to git diff
     bindkey -s '\ed' "  git diff\n"
     # --- Alt + D to git diff --cached
@@ -137,6 +139,7 @@ Git:
 Quick chaining:
 
     Alt + c             - add | wc -l to the current command
+    Alt + Shift + c     - invoke opencode
     Alt + g             - add | grep -i to the current command
     Alt + t             - add timestamp to the current command
     Alt + j             - add @json to the current command (pretty print json)
