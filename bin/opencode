@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec bunx --no-install opencode-ai "$@"

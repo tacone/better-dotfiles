@@ -140,7 +140,7 @@ open() {
 
 # One letter shortcuts
 
-alias c='opencode'
+# alias c='opencode'
 alias d='docker'
 n() { if [ "$#" -eq 0 ]; then nvim .; else nvim "$@"; fi; }
 # Directory stack navigation (oh-my-zsh style)

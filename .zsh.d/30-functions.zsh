@@ -193,7 +193,7 @@ gg() {
         return 1
     fi
     local prompt="Write a git commit message on staged changes. Don't include co-author. Only output the commit message, nothing else."
-    local message=$(gh copilot -p "$prompt" --model=claude-haiku-4.5 --silent 2> >(tee /dev/tty >&2))
+    local message=$(gh copilot -p "$prompt" --model=gpt-5-mini --silent 2> >(tee /dev/tty >&2))
     git commit -m "$message" -e
 }
 
