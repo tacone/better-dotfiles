@@ -1,6 +1,5 @@
 # Environment variables and PATH configuration
 
-export PATH="$HOME/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:$HOME/.local/bin"
 if [[ -r "$HOME/.zprofile" ]]; then
     source "$HOME/.zprofile"
 fi
@@ -47,7 +46,11 @@ export PATH="$HOME/.local/share/omarchy/bin:$PATH"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle:$HOME/.local/bin"
 export PATH="$BUN_INSTALL/bin:$PATH"
+export PATH="$HOME/.bin:$PATH"
+
+
 
 # --- the end section
 export STANDARD_PATH=$PATH
