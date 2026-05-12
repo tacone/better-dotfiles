@@ -144,12 +144,14 @@ function print_link() {
 }
 
 function get_current_branch () {
-    git rev-parse --abbrev-ref HEAD
+    # symbolic-ref works even on repos with no commits; fall back for detached HEAD
+    git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --abbrev-ref HEAD 2>/dev/null
 }
 
 function print_banner () {
     local branch=$(get_current_branch)
     local remote=$(get_remote)
+    [[ -z "$remote" ]] && return
     local platform=$(get_platform $remote)
     local url=$(get_url $remote repository)
     local link="$url/tree/$branch"
@@ -168,6 +170,7 @@ function print_banner () {
 
 function print_push_links() {
     local remote=$(get_remote)
+    [[ -z "$remote" ]] && return
     local platform=$(get_platform $remote)
     local url=''
 
@@ -199,11 +202,14 @@ function get_platform () {
         platform="dev.azure.com"
     fi
 
+    [[ -z "$platform" && -n "$remote" ]] && echo "\n[git-links] warning: unrecognized host in remote ($remote)" >&2
+
     echo "$platform"
 }
 
 function get_remote () {
-    git config --get remote.origin.url
+    local url
+    url=$(git config --get remote.origin.url)
     local return_code="$?"
 
     # todo: make this work
@@ -211,6 +217,19 @@ function get_remote () {
     if [[ $return_code -ne 0 ]]; then
         exit $return_code
     fi
+
+    # Resolve SSH host aliases (e.g. git@github-work: -> git@github.com:)
+    # so that platform detection works correctly for custom SSH config entries.
+    if [[ $url =~ '^[^@]+@([^:]+):' ]]; then
+        local host=${match[1]}
+        local real_host
+        real_host=$(timeout 2 ssh -G "$host" 2>/dev/null | awk '/^hostname / {print $2}')
+        if [[ -n "$real_host" && "$real_host" != "$host" ]]; then
+            url="${url/$host/$real_host}"
+        fi
+    fi
+
+    echo "$url"
 }
 
 function log () {
@@ -223,27 +242,30 @@ function log () {
 
     while IFS= read -r __line
     do
-        if [[ -z "$platform" ]]; then
-            echo -e "$__line"
-            continue
-        fi
-
         local hash=''
 
         # remove all non-printable characters
         # local sanitized_line=$( tr -dc '[[:print:][:space:]]' <<< "$__line") # original version
         local sanitized_line=${__line//$'\e'\[[0-9;]##[A-Za-z]/} # this is much faster
 
-
         # extract the hash from the line
         [[ $sanitized_line =~ '^.*([0-9a-f]{40}).*' ]] && hash=${match[1]}
-
-        # extract the short hash
-        local short_hash=${hash:0:8}
 
         # if the line doesn't contain a hash then print it as is
         if [[ -z "$hash" ]]; then
             echo -e "$__line"
+            continue
+        fi
+
+        # extract the short hash
+        local short_hash=${hash:0:8}
+
+        local link_text="$hash"
+        [[ $GIT_SHORT_HASH -eq 1 ]] && link_text="$short_hash"
+
+        # no platform: show short hash if requested, but no hyperlinks
+        if [[ -z "$platform" ]]; then
+            echo -e "${__line//$hash/$link_text}"
             continue
         fi
 
@@ -252,9 +274,6 @@ function log () {
         else
             url="$repository_url/commit/$short_hash"
         fi
-
-        local link_text="$hash"
-        [[ $GIT_SHORT_HASH -eq 1 ]] && link_text="$short_hash"
 
         # inline link: use the default underline when on VTE, otherwise add a solid underline
         if [[ "${USE_UNDERLINE:-1}" -eq 1 ]]; then
