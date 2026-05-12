@@ -22,35 +22,13 @@ type nc > /dev/null && nc -w1 -z localhost 4873 && export NPM_CONFIG_REGISTRY=ht
 
 # --- Paths
 
-_refresh_paths='export PATH=$STANDARD_PATH; [[ -f $HOME/.paths ]] && source $HOME/.paths;';
-
-#export PATH=$STANDARD_PATH;
-#[[ -f $HOME/.paths ]] && source $HOME/.paths;
-
-function add-path (){
-  local normpath
-
-  # expand the path (for example `~` -> `/home/youruser`)
-  normpath=${~1}
-  # transform into absolute path
-  normpath=${normpath:a}
-
-  normpath=$(echo $normpath | sed "s|$HOME|"'$HOME|')
-  echo 'export PATH='"$normpath"':$PATH' >> $HOME/.paths;
-  eval $_refresh_paths
-}
-alias edit-path='$EDITOR $HOME/.paths; eval $_refresh_paths'
-
 export PATH=./scripts:/home/stefano/.local/bin:$PATH
 export PATH="$HOME/.local/share/omarchy/bin:$PATH"
 
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle:$HOME/.local/bin"
-export PATH="$BUN_INSTALL/bin:$PATH"
+# export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle:$HOME/.local/bin"
+export PATH="$HOME/.bun/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.bin:$PATH"
-
-
 
 # --- the end section
 export STANDARD_PATH=$PATH
