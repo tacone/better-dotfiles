@@ -129,6 +129,8 @@ alias nnn='custom_nnn'
 alias clipcopy='wl-copy'
 alias clippaste='wl-paste'
 
+alias hyperland-bindings=hyprland-bindings
+
 # nvim wins over vim
 type "vim" > /dev/null && alias vi='vim'
 type "nvim" > /dev/null && alias vi='nvim'

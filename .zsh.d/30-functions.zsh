@@ -204,3 +204,39 @@ ask() {
     fi
     OPENCODE_CONFIG_CONTENT='{"permission":{"edit":"deny","bash":"deny"}}' opencode run "$*"
 }
+
+modmask_to_keys() {
+    while IFS= read -r line; do
+        mask="${line#*modmask: }"
+        mask="${mask%% *}"
+
+        [[ "$mask" =~ ^[0-9]+$ ]] || { echo "$line"; continue; }
+
+        result=()
+
+        (( mask & 1   )) && result+=("SHIFT")
+        (( mask & 2   )) && result+=("CAPS")
+        (( mask & 4   )) && result+=("CTRL")
+        (( mask & 8   )) && result+=("ALT")
+        (( mask & 16  )) && result+=("MOD2")
+        (( mask & 32  )) && result+=("MOD3")
+        (( mask & 64  )) && result+=("SUPER")
+        (( mask & 128 )) && result+=("MOD5")
+
+        if [ ${#result[@]} -eq 0 ]; then
+            keys="NONE"
+        else
+            keys="${result[*]}"
+        fi
+
+        echo "${line/modmask: $mask/modmask: $keys}"
+    done
+}
+
+# alias hyprland-bindings="hyprctl binds | grep -P 'bind\s|key|dispatcher|arg' | xargs echo | sed 's/bind\s/\n/g'"
+# alias hyprland-bindings="hyprctl binds | grep -P 'bind\S*$|key:|dispatcher:|arg:|modmask:' | xargs echo | sed -e 's/\(bind\S*\)/\n\1/g' | modmask_to_keys"
+# alias hyprland-bindings="hyprctl binds | grep -P 'bind\S*$|:' | xargs echo | sed -e 's/\(bind\S*\)/\n\1/g' | modmask_to_keys"
+
+hyprland-bindings() {
+    hyprctl binds | grep -P 'bind\S*$|:' | xargs echo | sed -e 's/\(bind\S*\)/\n\1/g' | modmask_to_keys | grep 'submap: key'
+}
