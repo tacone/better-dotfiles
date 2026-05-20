@@ -28,6 +28,7 @@ export PATH="$HOME/.local/share/omarchy/bin:$PATH"
 # export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle:$HOME/.local/bin"
 export PATH="$HOME/.bun/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$XDG_CACHE_HOME/.bun/bin:$PATH"
 export PATH="$HOME/.bin:$PATH"
 
 # --- the end section
