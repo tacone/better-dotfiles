@@ -36,8 +36,8 @@ _bind_custom_keys () {
     bindkey -s '\ej' $_SEP' @json'
     # --- Alt + e to nnnn
     bindkey -s '\ee' $_SEP'  nnn -cH\n'
-    # --- Alt + h to insert --help
-    bindkey -s '\eh' ' --help'
+    # --- Alt + h to insert --help and execute
+    bindkey -s '\eh' ' --help\n'
 
     # --- instant commands (will execute immediately) ---
 
