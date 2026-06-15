@@ -20,6 +20,8 @@ type nc > /dev/null && nc -w1 -z localhost 4873 && export NPM_CONFIG_REGISTRY=ht
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
+export BAT_THEME_DARK="Dracula"
+
 # --- Paths
 
 export PATH=./scripts:/home/stefano/.local/bin:$PATH
