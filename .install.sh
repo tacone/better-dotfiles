@@ -84,6 +84,9 @@ PACKAGES=(
     # Dotfiles management
     "rcm"
 
+    # Modern watch alternative
+    "viddy"
+
     # Directory jumping
     "zoxide"
 

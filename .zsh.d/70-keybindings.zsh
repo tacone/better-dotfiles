@@ -81,7 +81,11 @@ bindkey "^[b" insert-bat
 # Alt + w to insert watch at the beginning of the line
 
 insert_watch () {
-    local prefix="  watch -n0.5 -p -c grc --colour=on"
+    local prefix="  watch -c grc --colour=on"
+    if command -v viddy &> /dev/null; then
+        prefix="  viddy -s grc --colour=on"
+    fi
+
     BUFFER="$prefix $BUFFER"
     CURSOR=$(($CURSOR + $#prefix + 1))
     zle accept-line

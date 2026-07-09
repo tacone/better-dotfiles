@@ -123,11 +123,18 @@ alias filewatch8='FILEWATCH_SLEEP_TIME=8 noglob filewatch'
 alias filewatch9='FILEWATCH_SLEEP_TIME=9 noglob filewatch'
 alias filewatch10='FILEWATCH_SLEEP_TIME=10 noglob filewatch'
 
+if command -v viddy &> /dev/null; then
+    alias watch='viddy -s'
+fi
+
+
 alias nnn='custom_nnn'
 
 # Wayland clipboard aliases
 alias clipcopy='wl-copy'
 alias clippaste='wl-paste'
+
+
 
 alias hyperland-bindings=hyprland-bindings
 
