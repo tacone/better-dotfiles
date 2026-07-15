@@ -1,0 +1,121 @@
+#!/bin/bash
+set -euo pipefail
+
+INSTALL_DIR=/opt/OpenCode
+VERSION_FILE="$INSTALL_DIR/.version"
+
+LATEST_TAG=$(curl -s https://api.github.com/repos/anomalyco/opencode/releases/latest | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'].lstrip('v'))")
+if [[ -z "$LATEST_TAG" ]]; then
+  echo "ERROR: could not determine latest version from GitHub API" >&2
+  echo "Check your internet connection or API rate limit." >&2
+  exit 1
+fi
+
+if [[ -f "$VERSION_FILE" ]]; then
+  INSTALLED=$(<"$VERSION_FILE")
+  if [[ "$INSTALLED" == "$LATEST_TAG" ]]; then
+    echo "opencode-desktop v$INSTALLED is up to date."
+    exit 0
+  fi
+  echo "Updating opencode-desktop v$INSTALLED -> v$LATEST_TAG"
+else
+  echo "Installing opencode-desktop v$LATEST_TAG"
+fi
+
+ARCH=$(uname -m)
+case "$ARCH" in
+  x86_64)  debarch=amd64 ;;
+  aarch64) debarch=arm64 ;;
+  *)       echo "Unsupported arch: $ARCH"; exit 1 ;;
+esac
+
+TMPDIR=$(mktemp -d)
+trap 'rm -rf "$TMPDIR"' EXIT
+
+DEB_FILENAME="opencode-desktop-linux-${debarch}.deb"
+URL="https://github.com/anomalyco/opencode/releases/download/v${LATEST_TAG}/${DEB_FILENAME}"
+DEB="opencode-desktop-${LATEST_TAG}-linux-${debarch}.deb"
+
+echo "Downloading $DEB ..."
+curl -fL -o "$TMPDIR/$DEB" "$URL"
+SIZE=$(stat -c%s "$TMPDIR/$DEB" 2>/dev/null || echo 0)
+if [[ "$SIZE" -lt 10000000 ]]; then
+  echo "ERROR: downloaded file seems too small (${SIZE} bytes). Corrupt or wrong URL?" >&2
+  exit 1
+fi
+
+echo "Extracting ..."
+bsdtar -xf "$TMPDIR/$DEB" -C "$TMPDIR" data.tar.xz
+mkdir -p "$TMPDIR/extract"
+bsdtar -xf "$TMPDIR/data.tar.xz" -C "$TMPDIR/extract"
+
+SRC="$TMPDIR/extract"
+
+# Remove existing install
+sudo rm -rf "$INSTALL_DIR"
+
+# Copy new files
+sudo cp -a "$SRC/opt/OpenCode" "$INSTALL_DIR"
+
+# Prune Debian/Ubuntu-specific and dead files
+sudo rm -f "$INSTALL_DIR/resources/apparmor-profile"
+sudo rm -f "$INSTALL_DIR/resources/app-update.yml"
+
+# Clean up stale doc files from previous installs
+sudo rm -rf /usr/share/doc/opencode-desktop
+
+# Prune musl native modules (useless on glibc)
+find "$INSTALL_DIR" -name '*.musl.node' -delete
+find "$INSTALL_DIR" -depth -type d -name '*-musl' -exec rm -rf {} +
+
+# Ensure binary is executable
+sudo chmod +x "$INSTALL_DIR/ai.opencode.desktop"
+
+# Write version marker
+echo "$LATEST_TAG" | sudo tee "$VERSION_FILE" >/dev/null
+
+# Launcher wrapper
+sudo tee /usr/bin/opencode-desktop >/dev/null <<'EOF'
+#!/bin/bash
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+if [[ -f "$XDG_CONFIG_HOME/opencode-desktop-flags.conf" ]]; then
+  OPENCODE_USER_FLAGS="$(grep -v '^#' "$XDG_CONFIG_HOME/opencode-desktop-flags.conf")"
+fi
+exec /opt/OpenCode/ai.opencode.desktop $OPENCODE_USER_FLAGS "$@"
+EOF
+sudo chmod +x /usr/bin/opencode-desktop
+
+# Install desktop files and icons
+if [[ -d "$SRC/usr/share/applications" ]]; then
+  shopt -s nullglob
+  DESKTOP_FILES=("$SRC/usr/share/applications/"*.desktop)
+  if [[ ${#DESKTOP_FILES[@]} -gt 0 ]]; then
+    sudo cp "${DESKTOP_FILES[@]}" /usr/share/applications/
+  fi
+  shopt -u nullglob
+fi
+if [[ -d "$SRC/usr/share/icons" ]]; then
+  sudo mkdir -p /usr/share/icons
+  sudo cp -r "$SRC/usr/share/icons/"* /usr/share/icons/
+fi
+
+# Point desktop files at the wrapper
+shopt -s nullglob
+INSTALLED_DESKTOPS=(/usr/share/applications/*.desktop)
+if [[ ${#INSTALLED_DESKTOPS[@]} -gt 0 ]]; then
+  sudo sed -i 's|Exec=/opt/OpenCode/ai\.opencode\.desktop|Exec=opencode-desktop|' \
+    "${INSTALLED_DESKTOPS[@]}"
+fi
+shopt -u nullglob
+
+# Update icon cache (non-fatal)
+if command -v gtk-update-icon-cache &>/dev/null; then
+  sudo gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
+fi
+
+# License
+sudo mkdir -p /usr/share/licenses/opencode-desktop-bin
+curl -sL "https://raw.githubusercontent.com/anomalyco/opencode/v${LATEST_TAG}/LICENSE" | \
+  sudo tee /usr/share/licenses/opencode-desktop-bin/LICENSE >/dev/null
+
+echo "Done! Installed opencode-desktop v$LATEST_TAG"
