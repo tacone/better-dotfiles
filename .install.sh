@@ -85,7 +85,7 @@ PACKAGES=(
     "rcm"
 
     # Modern watch alternative
-    "viddy"
+    "viddy-bin"
 
     # Directory jumping
     "zoxide"
