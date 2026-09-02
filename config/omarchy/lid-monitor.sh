@@ -3,18 +3,20 @@
 # User-level lid close monitor for Omarchy
 # This script monitors lid events and suspends the system even when docked
 
-# Check if we're already running
-if pgrep -f "lid-monitor.sh" | grep -v $$ > /dev/null; then
+PIDFILE="${XDG_RUNTIME_DIR:-/tmp}/lid-monitor.pid"
+
+# Check if already running via PID file
+if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
     exit 0
 fi
+echo $$ > "$PIDFILE"
+trap 'rm -f "$PIDFILE"' EXIT
 
 # Function to check lid state
 check_lid_state() {
-    # Try different lid state detection methods
     if [ -f /proc/acpi/button/lid/LID/state ]; then
         grep -q "closed" /proc/acpi/button/lid/LID/state
     elif [ -d /sys/class/power_supply ]; then
-        # Look for lid device in power_supply
         for device in /sys/class/power_supply/*/type; do
             if [ -f "$device" ] && grep -q "Lid" "$device" 2>/dev/null; then
                 state_file="${device%/type}/state"
@@ -30,16 +32,20 @@ check_lid_state() {
     fi
 }
 
-# Monitor lid events using systemd-logind
-journalctl -f -u systemd-logind | while read line; do
-    if echo "$line" | grep -q "Lid closed"; then
+# Monitor lid state by polling /proc/acpi/button/lid/LID/state
+while true; do
+    if check_lid_state; then
         # Small delay to avoid accidental suspends
         sleep 3
-        
+
         # Double-check if lid is still closed
         if check_lid_state; then
-            # Suspend regardless of external monitor state
             systemctl suspend
+            # After resume, wait for lid to open before re-arming
+            while check_lid_state; do
+                sleep 1
+            done
         fi
     fi
+    sleep 1
 done
