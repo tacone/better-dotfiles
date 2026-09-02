@@ -71,3 +71,15 @@ o.window(
   { class = "^(xdg-desktop-portal-gtk)$", title = "^(Upload File.*|File Upload.*)" },
   { tag = "+floating-window" }
 )
+
+-- ============================================================================
+-- Notes scratchpad (special workspace "notes").
+-- omawrite opens as a floating 600px-wide panel along the right border, with
+-- 100px top/bottom margins. Toggled with SUPER+N (see bindings.lua).
+-- ============================================================================
+o.window("omawrite", {
+  float = true,
+  workspace = "special:notes silent",
+  size = { 600, "monitor_h - 200" },
+  move = { "monitor_w - window_w", "100" },
+})

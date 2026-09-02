@@ -107,6 +107,24 @@ for workspace = 11, 20 do
   o.bind("SUPER + ALT + " .. key, "Switch to workspace " .. workspace, hl.dsp.focus({ workspace = tostring(workspace) }))
 end
 
+-- SUPER+N: toggle the notes scratchpad (special workspace "notes").
+-- omawrite opens there as a floating right-side panel (see hyprland.lua).
+-- If omawrite isn't running yet, launch it on ~/notes.md; then toggle the
+-- special workspace to show/hide it.
+o.bind("SUPER + N", "Notes", function()
+  local running = false
+  for _, w in ipairs(hl.get_windows()) do
+    if w.class == "omawrite" then
+      running = true
+      break
+    end
+  end
+  if not running then
+    hl.dispatch(hl.dsp.exec_raw("uwsm-app -- omawrite ~/notes.md"))
+  end
+  hl.dispatch(hl.dsp.workspace.toggle_special("notes"))
+end)
+
 -- Logitech MX Keys examples:
 -- o.bind("SUPER + SHIFT + S", nil, "omarchy-capture-screenshot")
 -- o.bind("SUPER + H", nil, "voxtype record toggle")
