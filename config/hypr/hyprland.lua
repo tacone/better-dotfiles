@@ -73,13 +73,14 @@ o.window(
 )
 
 -- ============================================================================
--- Notes scratchpad (special workspace "notes").
+-- Notes scratchpad.
 -- omawrite opens as a floating 600px-wide panel along the right border, with
--- 100px top/bottom margins. Toggled with SUPER+N (see bindings.lua).
+-- 100px top/bottom margins. SUPER+N (see bindings.lua) launches it on the
+-- primary monitor's active workspace, then toggles it by moving it to/from a
+-- hidden special workspace (never displayed, only used to hide the app).
 -- ============================================================================
 o.window("omawrite", {
   float = true,
-  workspace = "special:notes silent",
   size = { 600, "monitor_h - 200" },
   move = { "monitor_w - window_w", "100" },
 })

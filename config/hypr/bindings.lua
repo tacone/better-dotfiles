@@ -107,22 +107,42 @@ for workspace = 11, 20 do
   o.bind("SUPER + ALT + " .. key, "Switch to workspace " .. workspace, hl.dsp.focus({ workspace = tostring(workspace) }))
 end
 
--- SUPER+N: toggle the notes scratchpad (special workspace "notes").
--- omawrite opens there as a floating right-side panel (see hyprland.lua).
--- If omawrite isn't running yet, launch it on ~/notes.md; then toggle the
--- special workspace to show/hide it.
+-- SUPER+N: toggle the notes scratchpad.
+-- omawrite opens as a floating right-side panel (see hyprland.lua).
+-- First press launches it on the primary monitor's active workspace; later
+-- presses toggle it by moving it to/from a hidden special workspace (never
+-- displayed, only used to hide the app when toggled off).
+local NOTES_MONITOR = "eDP-1"
+local NOTES_HIDDEN = "special:notes-hidden"
 o.bind("SUPER + N", "Notes", function()
-  local running = false
+  local win = nil
   for _, w in ipairs(hl.get_windows()) do
     if w.class == "omawrite" then
-      running = true
+      win = w
       break
     end
   end
-  if not running then
+
+  if not win then
+    -- Not running: launch it floating on the primary monitor's active workspace.
+    hl.dispatch(hl.dsp.focus({ monitor = NOTES_MONITOR }))
     hl.dispatch(hl.dsp.exec_raw("uwsm-app -- omawrite ~/notes.md"))
+    return
   end
-  hl.dispatch(hl.dsp.workspace.toggle_special("notes"))
+
+  -- Running: toggle between the hidden special workspace and the primary
+  -- monitor's active workspace.
+  local wsName = win.workspace and win.workspace.name or ""
+  if wsName == NOTES_HIDDEN then
+    -- Hidden: move back to the primary monitor's active workspace.
+    hl.dispatch(hl.dsp.window.move({
+      workspace = hl.get_active_workspace(NOTES_MONITOR),
+      window = win,
+    }))
+  else
+    -- Visible: move to the hidden special workspace.
+    hl.dispatch(hl.dsp.window.move({ workspace = NOTES_HIDDEN, window = win }))
+  end
 end)
 
 -- Logitech MX Keys examples:
