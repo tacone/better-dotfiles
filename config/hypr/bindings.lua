@@ -140,8 +140,14 @@ o.bind("SUPER + N", "Notes", function()
       window = win,
     }))
   else
-    -- Visible: move to the hidden special workspace.
-    hl.dispatch(hl.dsp.window.move({ workspace = NOTES_HIDDEN, window = win }))
+    -- Visible: move to the hidden special workspace. follow=false keeps the
+    -- special workspace hidden (otherwise moving the window into it would
+    -- display the special workspace as an overlay).
+    hl.dispatch(hl.dsp.window.move({
+      workspace = NOTES_HIDDEN,
+      window = win,
+      follow = false,
+    }))
   end
 end)
 
