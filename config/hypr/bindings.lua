@@ -174,6 +174,23 @@ o.bind("SUPER + S", "Toggle scratchpad", function()
   hl.dispatch(hl.dsp.workspace.toggle_special("scratchpad"))
 end)
 
+-- SUPER+A: ChatGPT scratchpad on the primary monitor (eDP-1), same behavior as
+-- the terminal scratchpad. When the special:chatgpt workspace is missing or
+-- empty, launch the ChatGPT webapp into it before showing it. Closing it
+-- empties the workspace, which Hyprland removes automatically, so the next
+-- toggle creates a fresh ChatGPT again. (SUPER+SHIFT+A is left untouched.)
+o.bind("SUPER + A", "ChatGPT scratchpad", function()
+  -- Always appear on the primary monitor.
+  hl.dispatch(hl.dsp.focus({ monitor = "eDP-1" }))
+
+  local ws = hl.get_workspace("special:chatgpt")
+  if ws == nil or ws.is_empty then
+    -- Missing or empty: launch the ChatGPT webapp into the scratchpad.
+    hl.exec_cmd("omarchy-launch-webapp https://chatgpt.com", { workspace = "special:chatgpt" })
+  end
+  hl.dispatch(hl.dsp.workspace.toggle_special("chatgpt"))
+end)
+
 -- Logitech MX Keys examples:
 -- o.bind("SUPER + SHIFT + S", nil, "omarchy-capture-screenshot")
 -- o.bind("SUPER + H", nil, "voxtype record toggle")
