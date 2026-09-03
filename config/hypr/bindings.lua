@@ -151,6 +151,15 @@ o.bind("SUPER + N", "Notes", function()
   end
 end)
 
+-- SUPER+S: constrain the default scratchpad to the primary monitor (eDP-1).
+-- The default binding uses toggle_special which acts on the focused monitor;
+-- focus eDP-1 first so the scratchpad always appears there.
+hl.unbind("SUPER + S")
+o.bind("SUPER + S", "Toggle scratchpad", function()
+  hl.dispatch(hl.dsp.focus({ monitor = "eDP-1" }))
+  hl.dispatch(hl.dsp.workspace.toggle_special("scratchpad"))
+end)
+
 -- Logitech MX Keys examples:
 -- o.bind("SUPER + SHIFT + S", nil, "omarchy-capture-screenshot")
 -- o.bind("SUPER + H", nil, "voxtype record toggle")
