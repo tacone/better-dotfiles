@@ -151,12 +151,26 @@ o.bind("SUPER + N", "Notes", function()
   end
 end)
 
--- SUPER+S: constrain the default scratchpad to the primary monitor (eDP-1).
+-- SUPER+S: toggle the scratchpad on the primary monitor (eDP-1).
 -- The default binding uses toggle_special which acts on the focused monitor;
 -- focus eDP-1 first so the scratchpad always appears there.
+--
+-- When the scratchpad special workspace is missing or empty, launch a fresh
+-- default terminal into it (via exec_cmd's workspace rule) before showing it.
+-- Closing the terminal empties the workspace, which Hyprland removes
+-- automatically (misc.close_special_on_empty), so the next toggle creates a
+-- fresh terminal again.
 hl.unbind("SUPER + S")
 o.bind("SUPER + S", "Toggle scratchpad", function()
+  -- Always appear on the primary monitor.
   hl.dispatch(hl.dsp.focus({ monitor = "eDP-1" }))
+
+  local ws = hl.get_workspace("special:scratchpad")
+  if ws == nil or ws.is_empty then
+    -- Missing or empty: launch a fresh default terminal into the scratchpad,
+    -- then show it.
+    hl.exec_cmd("omarchy-launch-terminal", { workspace = "special:scratchpad" })
+  end
   hl.dispatch(hl.dsp.workspace.toggle_special("scratchpad"))
 end)
 
