@@ -191,6 +191,25 @@ o.bind("SUPER + A", "ChatGPT scratchpad", function()
   hl.dispatch(hl.dsp.workspace.toggle_special("chatgpt"))
 end)
 
+-- SUPER+O: OpenCode scratchpad on the primary monitor (eDP-1), same behavior as
+-- the terminal scratchpad. When the special:opencode workspace is missing or
+-- empty, launch opencode in a fresh terminal (in ~/.dotfiles) into it before
+-- showing it. Closing it empties the workspace, which Hyprland removes
+-- automatically, so the next toggle creates a fresh opencode again.
+-- (SUPER+SHIFT+O is left untouched.)
+hl.unbind("SUPER + O")
+o.bind("SUPER + O", "OpenCode scratchpad", function()
+  -- Always appear on the primary monitor.
+  hl.dispatch(hl.dsp.focus({ monitor = "eDP-1" }))
+
+  local ws = hl.get_workspace("special:opencode")
+  if ws == nil or ws.is_empty then
+    -- Missing or empty: launch opencode in a fresh terminal into the scratchpad.
+    hl.exec_cmd("omarchy-launch-terminal --dir=/home/tacone/.dotfiles opencode", { workspace = "special:opencode" })
+  end
+  hl.dispatch(hl.dsp.workspace.toggle_special("opencode"))
+end)
+
 -- Logitech MX Keys examples:
 -- o.bind("SUPER + SHIFT + S", nil, "omarchy-capture-screenshot")
 -- o.bind("SUPER + H", nil, "voxtype record toggle")
