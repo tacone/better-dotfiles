@@ -205,7 +205,7 @@ o.bind("SUPER + O", "OpenCode scratchpad", function()
   local ws = hl.get_workspace("special:opencode")
   if ws == nil or ws.is_empty then
     -- Missing or empty: launch opencode in a fresh terminal into the scratchpad.
-    hl.exec_cmd("omarchy-launch-terminal --dir=/home/tacone/.dotfiles opencode", { workspace = "special:opencode" })
+    hl.exec_cmd("omarchy-launch-terminal --dir=$HOME/.dotfiles opencode", { workspace = "special:opencode" })
   end
   hl.dispatch(hl.dsp.workspace.toggle_special("opencode"))
 end)

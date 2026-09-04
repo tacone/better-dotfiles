@@ -43,7 +43,7 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 bindkey -M menuselect "+" accept-and-menu-complete
 
 # bun completions
-[ -s "/home/tacone/.bun/_bun" ] && source "/home/tacone/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # --- options override
 
