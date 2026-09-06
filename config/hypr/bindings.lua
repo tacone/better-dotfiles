@@ -52,6 +52,10 @@ o.bind("SUPER + ALT + P", "Preflight", { webapp = "https://preflight.traefik.me/
 -- SUPER+ALT+A: Claude webapp.
 o.bind("SUPER + ALT + A", "Claude", { webapp = "https://claude.ai/new" })
 
+-- SUPER+SHIFT+E: Gmail webapp (replaces default Hey).
+hl.unbind("SUPER + SHIFT + E")
+o.bind("SUPER + SHIFT + E", "Email", { webapp = "https://mail.google.com/", focus = true })
+
 -- Scrolling layout column width cycling (presets in looknfeel.lua).
 -- Columns are centered in view only at the widest preset (0.98); at other
 -- widths the default "fit" behavior is used.
