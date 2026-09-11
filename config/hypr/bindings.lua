@@ -155,6 +155,24 @@ o.bind("SUPER + N", "Notes", function()
   end
 end)
 
+-- If a special workspace is currently shown on a different monitor than the
+-- focused one, focus that monitor (bringing the special workspace into focus)
+-- instead of toggling it off. Returns true when it did so.
+local function focus_special_if_elsewhere(name)
+  local ws = hl.get_workspace("special:" .. name)
+  if not ws or not ws.visible or not ws.monitor then
+    return false
+  end
+
+  local focused = hl.get_active_monitor()
+  if focused and ws.monitor.name ~= focused.name then
+    hl.dispatch(hl.dsp.focus({ monitor = ws.monitor.name }))
+    return true
+  end
+
+  return false
+end
+
 -- SUPER+S: toggle the scratchpad on the primary monitor (eDP-1).
 -- The default binding uses toggle_special which acts on the focused monitor;
 -- focus eDP-1 first so the scratchpad always appears there.
@@ -166,6 +184,12 @@ end)
 -- fresh terminal again.
 hl.unbind("SUPER + S")
 o.bind("SUPER + S", "Toggle scratchpad", function()
+  -- If the scratchpad is shown on another monitor, focus it instead of
+  -- toggling it off.
+  if focus_special_if_elsewhere("scratchpad") then
+    return
+  end
+
   -- Always appear on the primary monitor.
   hl.dispatch(hl.dsp.focus({ monitor = "eDP-1" }))
 
@@ -184,6 +208,12 @@ end)
 -- empties the workspace, which Hyprland removes automatically, so the next
 -- toggle creates a fresh ChatGPT again. (SUPER+SHIFT+A is left untouched.)
 o.bind("SUPER + A", "ChatGPT scratchpad", function()
+  -- If the ChatGPT scratchpad is shown on another monitor, focus it instead of
+  -- toggling it off.
+  if focus_special_if_elsewhere("chatgpt") then
+    return
+  end
+
   -- Always appear on the primary monitor.
   hl.dispatch(hl.dsp.focus({ monitor = "eDP-1" }))
 
@@ -203,6 +233,12 @@ end)
 -- (SUPER+SHIFT+O is left untouched.)
 hl.unbind("SUPER + O")
 o.bind("SUPER + O", "OpenCode scratchpad", function()
+  -- If the OpenCode scratchpad is shown on another monitor, focus it instead of
+  -- toggling it off.
+  if focus_special_if_elsewhere("opencode") then
+    return
+  end
+
   -- Always appear on the primary monitor.
   hl.dispatch(hl.dsp.focus({ monitor = "eDP-1" }))
 
