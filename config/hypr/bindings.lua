@@ -116,6 +116,10 @@ end
 -- First press launches it on the primary monitor's active workspace; later
 -- presses toggle it by moving it to/from a hidden special workspace (never
 -- displayed, only used to hide the app when toggled off).
+--
+-- Notes never stay visible unfocused: whenever omawrite loses focus it is
+-- moved back to the hidden special workspace (see the window.active handler
+-- below). So the toggle-off branch only matters while notes are focused.
 local NOTES_MONITOR = "eDP-1"
 local NOTES_HIDDEN = "special:notes-hidden"
 o.bind("SUPER + N", "Notes", function()
@@ -152,6 +156,29 @@ o.bind("SUPER + N", "Notes", function()
       window = win,
       follow = false,
     }))
+  end
+end)
+
+-- Hide notes whenever they lose focus: if the newly focused window is not
+-- omawrite (or focus left windows entirely), move omawrite back to the hidden
+-- special workspace so it never stays visible while unfocused.
+hl.on("window.active", function(win)
+  if win and win.class == "omawrite" then
+    return
+  end
+
+  for _, w in ipairs(hl.get_windows()) do
+    if w.class == "omawrite" then
+      local wsName = w.workspace and w.workspace.name or ""
+      if wsName ~= NOTES_HIDDEN then
+        hl.dispatch(hl.dsp.window.move({
+          workspace = NOTES_HIDDEN,
+          window = w,
+          follow = false,
+        }))
+      end
+      return
+    end
   end
 end)
 
