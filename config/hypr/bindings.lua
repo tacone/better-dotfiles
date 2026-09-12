@@ -277,6 +277,14 @@ o.bind("SUPER + O", "OpenCode scratchpad", function()
   hl.dispatch(hl.dsp.workspace.toggle_special("opencode"))
 end)
 
+-- SUPER+ALT+Y: prompt for a YouTube URL and summarize it with prosey.
+-- The helper (bin/prosey-prompt) shows the Omarchy shell text-input modal, then
+-- runs `prosey --html <url>` detached (no terminal); prosey opens the generated
+-- summary in the browser on success, and a click-to-retry notification is raised
+-- on failure. Bound via an absolute path because Hyprland's exec environment
+-- does not include ~/.bin on PATH.
+o.bind("SUPER + ALT + Y", "Prosey (YouTube summary)", "$HOME/.bin/prosey-prompt")
+
 -- Logitech MX Keys examples:
 -- o.bind("SUPER + SHIFT + S", nil, "omarchy-capture-screenshot")
 -- o.bind("SUPER + H", nil, "voxtype record toggle")

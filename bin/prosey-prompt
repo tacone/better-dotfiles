@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# prosey-prompt — ask for a YouTube URL, then summarize it in the background.
+#
+# Bound to SUPER+ALT+Y. Shows the Omarchy shell text-input modal, then runs
+# `prosey --html <url>` detached with no terminal window. On success prosey
+# opens the generated summary in the browser; on failure a click-to-retry
+# desktop notification is raised.
+#
+# prosey only auto-opens the browser when its stdout is a TTY, so the run is
+# wrapped in `script` to hand it a PTY while staying windowless. The URL is
+# passed through the environment, never interpolated into the command string.
+#
+# Hyprland's exec environment does not carry ~/.bun/bin, ~/.local/bin or
+# /usr/share/omarchy/bin, so PATH is set explicitly to stay self-sufficient no
+# matter how this script is invoked: keybinding, background run, notification
+# click.
+set -euo pipefail
+
+export PATH="$HOME/.bun/bin:$HOME/.local/bin:/usr/share/omarchy/bin:$PATH"
+
+readonly LOG_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/prosey-prompt"
+readonly LOG="$LOG_DIR/last-run.log"
+
+# Absolute path to this script, so notification clicks and background runs
+# never depend on PATH.
+if [[ $0 == */* ]]; then
+  self=$(readlink -f -- "$0")
+else
+  self=$(command -v -- "$0" || printf '%s' "$0")
+fi
+
+notify_failure() {
+  omarchy-notification-send \
+    "Prosey failed" \
+    "Could not summarize: $1" \
+    -u normal \
+    --exec "$self" --retry "$1"
+}
+
+run() {
+  local url=$1 status
+  mkdir -p "$LOG_DIR"
+
+  # `script` gives prosey a PTY (so it opens the browser) without a visible
+  # window; --return propagates prosey's exit code and the session output is
+  # kept in the log for troubleshooting.
+  set +e
+  PROSEY_URL="$url" script -qec 'prosey --html "$PROSEY_URL"' "$LOG"
+  status=$?
+  set -e
+
+  (( status == 0 )) && return 0
+  # 130 = interrupted by the user (Ctrl-C): not a failure worth retrying.
+  (( status == 130 )) && return 0
+  notify_failure "$url"
+}
+
+background() {
+  setsid "$self" --run "$1" >/dev/null 2>&1 </dev/null &
+}
+
+case ${1:-} in
+  --run)
+    run "$2"
+    ;;
+  --retry)
+    # Invoked by clicking the failure notification.
+    background "$2"
+    ;;
+  *)
+    # Invoked by the keybinding.
+    if ! url=$(omarchy-menu-input "YouTube URL"); then
+      exit 0 # cancelled
+    fi
+    [[ -n $url ]] || exit 0
+    background "$url"
+    ;;
+esac
