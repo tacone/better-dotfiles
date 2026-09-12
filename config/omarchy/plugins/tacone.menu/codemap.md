@@ -25,6 +25,22 @@ input mode (`SUPER+ALT+Y` → `omarchy-menu-input` → `prosey-prompt`).
   `Qt.ControlModifier` and matched no branch). Paste appends at the end because the
   handler has no cursor/selection model. `Quickshell` is already imported.
 - Bitmask modifier checks tolerate extra bits from CapsLock/NumLock.
+- `Menu.qml` carries a second local patch for the apps submenu. The shell gives a
+  cloned (`firstParty: false`) menu plugin a capability-scoped shell whose
+  `appLibrary` is **null** (the shell only wires `appLibrary` for the built-in), so
+  `mergeAppRows()` bailed immediately and the Apps list rendered empty. The clone
+  now defines a `localAppLibrary` built straight from Quickshell's
+  `DesktopEntries` singleton (mirroring `AppLibrary`/`AppSearch`: `name`/`id`,
+  `genericName`, `noDisplay` filtering, `Quickshell.iconPath`, and
+  `DesktopEntry.execute()` for launch), and
+  `readonly property var appLibrary: (root.shell && root.shell.appLibrary) ? root.shell.appLibrary : root.localAppLibrary`.
+  Because that fallback is a plain JS object (no `appsChanged` signal), the
+  original `Connections { target: root.appLibrary; onAppsChanged }` was replaced
+  with `Connections { target: DesktopEntries; onApplicationsChanged }` so the list
+  refreshes when Quickshell's asynchronous desktop-entry scan completes. The menu
+  also resets its provider cache when its JSONC sources reload, so
+  `touch ~/.config/omarchy/extensions/omarchy-menu.jsonc` forces a re-merge without
+  restarting the shell.
 
 ## Flow
 1. The shell loads this plugin as the `omarchy.menu` target.

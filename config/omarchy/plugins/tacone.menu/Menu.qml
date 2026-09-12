@@ -77,7 +77,57 @@ Item {
 
   // Shared application engine (entries, hidden filters, icons, launch,
   // removal), owned by the shell and also used by the standalone launcher.
-  readonly property var appLibrary: root.shell ? root.shell.appLibrary : null
+  //
+  // LOCAL PATCH: the shell does not hand cloned menu plugins a usable
+  // AppLibrary capability — `root.shell.appLibrary` is always null for a clone —
+  // so the apps submenu would render empty. Build the minimal surface the menu
+  // needs straight from Quickshell's DesktopEntries singleton, mirroring
+  // AppLibrary/AppSearch (name, genericName, noDisplay filtering, icons, launch).
+  readonly property var localAppLibrary: ({
+    sortedEntries: function(query) {
+      var q = String(query || "").trim().toLowerCase()
+      var values = DesktopEntries.applications.values || []
+      var rows = []
+      for (var i = 0; i < values.length; i++) {
+        var entry = values[i]
+        if (!entry || entry.noDisplay) continue
+        var name = String(entry.name || entry.id || "")
+        if (!name) continue
+        if (q && name.toLowerCase().indexOf(q) < 0) continue
+        rows.push({ entry: entry })
+      }
+      rows.sort(function(a, b) {
+        var an = String(a.entry.name || "").toLowerCase()
+        var bn = String(b.entry.name || "").toLowerCase()
+        return an < bn ? -1 : (an > bn ? 1 : 0)
+      })
+      return rows
+    },
+    entryName: function(entry) {
+      return String((entry && entry.name) || (entry && entry.id) || "")
+    },
+    entrySubtext: function(entry) {
+      return String((entry && entry.genericName) || "")
+    },
+    iconSource: function(icon) {
+      var value = String(icon || "")
+      if (value.length === 0) return Quickshell.iconPath("application-x-executable", true)
+      if (value.indexOf("file://") === 0 || value.indexOf("image://") === 0) return value
+      if (value.charAt(0) === "/") return Util.fileUrl(value)
+      var themed = Quickshell.iconPath(value, true)
+      return themed.length > 0 ? themed : Quickshell.iconPath("application-x-executable", true)
+    },
+    refreshIcons: function() {},
+    launch: function(desktopId) {
+      var id = String(desktopId || "")
+      var values = DesktopEntries.applications.values || []
+      for (var i = 0; i < values.length; i++) {
+        if (String(values[i].id || "") === id) { values[i].execute(); return }
+      }
+    },
+    remove: function() {}
+  })
+  readonly property var appLibrary: (root.shell && root.shell.appLibrary) ? root.shell.appLibrary : root.localAppLibrary
   property bool deleteConfirmOpen: false
   property var deleteTarget: null
   onOpenedChanged: if (!opened) { deleteConfirmOpen = false; deleteTarget = null }
@@ -909,9 +959,15 @@ Item {
     referenceItem: card
   }
 
+  // LOCAL PATCH: cloned menu plugins don't receive a QObject AppLibrary from the
+  // shell (root.shell.appLibrary is null), so the original
+  // `Connections { target: root.appLibrary; onAppsChanged }` is dropped — the
+  // local fallback is a plain JS object with no signal. Watch the shared
+  // DesktopEntries singleton instead; it emits when the (asynchronous)
+  // desktop-entry scan completes or the entry set changes.
   Connections {
-    target: root.appLibrary
-    function onAppsChanged() {
+    target: DesktopEntries
+    function onApplicationsChanged() {
       if (root.providersLoaded["apps"]) root.mergeAppRows()
     }
   }
