@@ -24,7 +24,7 @@
       ],
       "left": [
         {
-          "id": "omarchy.menu"
+          "id": "tacone.menu"
         },
         {
           "id": "custom.workspaces"
@@ -66,5 +66,11 @@
     "screensaver": 150
   },
   "plugins": [],
-  "version": 1
+  "version": 1,
+  "disabledPlugins": [
+    "omarchy.menu"
+  ],
+  "cloneSourceRestores": [
+    "tacone.menu"
+  ]
 }
