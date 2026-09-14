@@ -1,0 +1,3 @@
+# rcm configuration — see rcrc(5)
+# Exclude codemap documentation files from being symlinked into $HOME.
+EXCLUDES="*codemap.md"
