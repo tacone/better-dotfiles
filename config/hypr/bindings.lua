@@ -56,6 +56,10 @@ o.bind("SUPER + ALT + A", "Claude", { webapp = "https://claude.ai/new" })
 hl.unbind("SUPER + SHIFT + E")
 o.bind("SUPER + SHIFT + E", "Email", { webapp = "https://mail.google.com/", focus = true })
 
+-- SUPER+SHIFT+C: Google Calendar webapp (replaces default Hey Calendar).
+hl.unbind("SUPER + SHIFT + C")
+o.bind("SUPER + SHIFT + C", "Calendar", { webapp = "https://calendar.google.com/calendar/u/0/r", focus = true })
+
 -- Scrolling layout column width cycling (presets in looknfeel.lua).
 -- Columns are centered in view only at the widest preset (0.98); at other
 -- widths the default "fit" behavior is used.
