@@ -5,7 +5,7 @@ alias find='noglob find'
 
 # File system
 if command -v eza &> /dev/null; then
-    alias ls='eza -lh --group-directories-first --icons=auto --hyperlink'
+    alias ls='eza -lh --group-directories-first --icons=auto --hyperlink=auto'
     alias lt='eza --tree --level=2 --long --icons --git'
     alias lta='lt -a'
 else
