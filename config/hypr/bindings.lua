@@ -115,6 +115,13 @@ for workspace = 11, 20 do
   o.bind("SUPER + ALT + " .. key, "Switch to workspace " .. workspace, hl.dsp.focus({ workspace = tostring(workspace) }))
 end
 
+-- Workspace back and forth (restored from bindings.conf).
+-- SUPER+\: switch to the previously used workspace.
+o.bind("SUPER + backslash", "Previous workspace", hl.dsp.focus({ workspace = "previous" }))
+
+-- SUPER+SHIFT+\: move the focused window to the previous workspace and follow.
+o.bind("SUPER + SHIFT + backslash", "Move window to previous workspace", hl.dsp.window.move({ workspace = "previous" }))
+
 -- SUPER+N: toggle the notes scratchpad.
 -- omawrite opens as a floating right-side panel (see hyprland.lua).
 -- First press launches it on the primary monitor's active workspace; later
