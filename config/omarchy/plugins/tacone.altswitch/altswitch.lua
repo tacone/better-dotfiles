@@ -1,9 +1,11 @@
--- Immediate MRU Alt+Tab for Hyprland: cycle every window on every workspace,
--- most recently used first. Each TAB tap switches focus immediately; no panel.
+-- Immediate MRU Alt+Tab for Hyprland: cycle the windows on the current
+-- workspace, most recently used first. Each TAB tap switches focus immediately;
+-- no panel.
 --
 -- Fork of omarchy-altswitch (Pablo Merino, MIT) with the preview panel and
--- release-to-commit removed. The window list is snapshotted when the switch
--- starts and frozen, so the order cannot shuffle underneath you while tabbing.
+-- release-to-commit removed, and the window list scoped to the active
+-- workspace. The list is snapshotted when the switch starts and frozen, so the
+-- order cannot shuffle underneath you while tabbing.
 
 local altswitch = { windows = {}, index = 1, active = false }
 
@@ -29,10 +31,11 @@ local function altswitch_teardown()
 end
 
 local function altswitch_snapshot()
+  local active_workspace = hl.get_active_workspace()
   local windows = {}
   for _, window in ipairs(hl.get_windows()) do
     local workspace = window.workspace
-    if window.mapped and workspace and not workspace.special then
+    if window.mapped and workspace and not workspace.special and workspace.id == active_workspace.id then
       windows[#windows + 1] = window
     end
   end
