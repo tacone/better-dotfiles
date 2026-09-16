@@ -12,6 +12,10 @@
 -- To disable all preinstalled app/webapp bindings, set:
 --   omarchy_preinstalled_bindings = false
 
+-- omarchy-altswitch: deterministic Alt+Tab window switcher (frozen MRU list,
+-- release Alt to select). Unbinds the default cyclenext/tab bindings itself.
+dofile(os.getenv("HOME") .. "/.config/omarchy/plugins/io.github.pablo-merino.altswitch/altswitch.lua")
+
 -- Add a new binding.
 -- o.bind("SUPER + SHIFT + R", "SSH", "alacritty -e ssh your-server")
 
