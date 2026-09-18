@@ -124,8 +124,11 @@ alias filewatch9='FILEWATCH_SLEEP_TIME=9 noglob filewatch'
 alias filewatch10='FILEWATCH_SLEEP_TIME=10 noglob filewatch'
 
 if command -v viddy &> /dev/null; then
-    alias watch='viddy -s'
+    alias viddy='viddy -s -t --disable_auto_save'
 fi
+
+# Watch git log with procps watch (interpret ANSI colors)
+alias watch-git-log='watch -c git log --color=always'
 
 
 alias nnn='custom_nnn'
