@@ -12,6 +12,18 @@
 -- To disable all preinstalled app/webapp bindings, set:
 --   omarchy_preinstalled_bindings = false
 
+-- Keep SUPER+arrow window focus/swap constrained to the current workspace.
+-- Hyprland's movefocus/swapwindow never cross workspace numbers on a monitor,
+-- but binds:window_direction_monitor_fallback (default true) lets them jump to
+-- the focused monitor's active workspace once the focused window reaches the
+-- screen edge. Disable it so arrows stay inside the workspace; use CTRL+ALT+TAB
+-- to move focus between monitors.
+hl.config({
+  binds = {
+    window_direction_monitor_fallback = false,
+  },
+})
+
 -- tacone.altswitch: deterministic Alt+Tab window switcher (frozen MRU list,
 -- immediate focus on each tap, no preview panel). Fork of omarchy-altswitch.
 -- Unbinds the default cyclenext/tab bindings itself.
