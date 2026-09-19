@@ -153,9 +153,10 @@ open() {
 alias d='docker'
 n() { if [ "$#" -eq 0 ]; then nvim .; else nvim "$@"; fi; }
 # Directory stack navigation (oh-my-zsh style)
+# `cd -N` does not map to `dirs -v` numbering, so index $dirstack explicitly.
 alias d='dirs -v'
 for i in {1..9}; do
-    alias $i="cd -$i"
+    alias $i="cd \"\$dirstack[$i]\""
 done
 alias x='xdg-open' # duplicate of `open` (but worst)
 
