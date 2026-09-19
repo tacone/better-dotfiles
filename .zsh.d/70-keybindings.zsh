@@ -55,20 +55,6 @@ _bind_custom_keys () {
 }
 _bind_custom_keys;
 
-# --- Number keys 1-9 jump to directory stack entries (most recent = 1) ---
-# Replicates the oh-my-zsh-era behavior: with AUTO_PUSHD every cd pushes the
-# previous directory onto the stack, and pressing a digit runs `cd -N`.
-# Uses `builtin cd` so it bypasses any cd alias (e.g. zoxide).
-function cd-number() {
-    builtin cd -${KEYS[-1]}
-}
-zle -N cd-number
-for i in {1..9}; do
-    bindkey -M emacs "$i" cd-number
-    bindkey -M viins "$i" cd-number
-done
-# See the stack with: dirs -v
-
 # --- Alt + Shift + H to access the man page of the current command
 # (ex: git commit<Alt+Shift+h>)
 autoload run-help
