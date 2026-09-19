@@ -22,6 +22,10 @@ type nc > /dev/null && nc -w1 -z localhost 4873 && export NPM_CONFIG_REGISTRY=ht
 
 export BAT_THEME_DARK="Dracula"
 
+# Let less capture the mouse wheel (scroll the pager output instead of the
+# terminal) and keep ANSI colors.
+export LESS="--mouse --wheel-lines=3 -R"
+
 # --- Paths
 
 export PATH=./scripts:/home/stefano/.local/bin:$PATH
