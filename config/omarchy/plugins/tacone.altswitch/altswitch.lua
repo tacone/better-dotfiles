@@ -31,11 +31,15 @@ local function altswitch_teardown()
 end
 
 local function altswitch_snapshot()
-  local active_workspace = hl.get_active_workspace()
+  -- Scope to the active window's workspace, not hl.get_active_workspace():
+  -- inside a special workspace the latter still reports the normal workspace
+  -- underneath, which would make Alt+Tab jump out of the special workspace.
+  local active = hl.get_active_window()
+  local scope = active and active.workspace or hl.get_active_workspace()
   local windows = {}
   for _, window in ipairs(hl.get_windows()) do
     local workspace = window.workspace
-    if window.mapped and workspace and not workspace.special and workspace.id == active_workspace.id then
+    if window.mapped and workspace and workspace.id == scope.id then
       windows[#windows + 1] = window
     end
   end
