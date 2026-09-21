@@ -25,6 +25,9 @@ export EDITOR='nvim'
 
 # Zsh options
 setopt AUTO_PUSHD
+setopt PUSHD_SILENT
+setopt PUSHD_IGNORE_DUPS
+DIRSTACKSIZE=20
 
 # ------------------------------------------------------------
 # Basic eyboard funcionality

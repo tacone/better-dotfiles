@@ -3,10 +3,9 @@
 -- no panel.
 --
 -- Fork of omarchy-altswitch (Pablo Merino, MIT) with the preview panel and
--- release-to-commit removed, and the window list scoped to the focused
--- workspace — including a special workspace (scratchpad) while it is shown.
--- The list is snapshotted when the switch starts and frozen, so the order
--- cannot shuffle underneath you while tabbing.
+-- release-to-commit removed, and the window list scoped to the active
+-- workspace. The list is snapshotted when the switch starts and frozen, so the
+-- order cannot shuffle underneath you while tabbing.
 
 local altswitch = { windows = {}, index = 1, active = false }
 
@@ -31,31 +30,16 @@ local function altswitch_teardown()
   altswitch.windows = {}
 end
 
--- The workspace to scope the switcher to. `hl.get_active_workspace()` reports
--- the monitor's regular workspace even while a special workspace is shown, and
--- the Lua monitor object does not expose the active special workspace, so use
--- the focused window's workspace instead: while a scratchpad special workspace
--- is visible it is the focused one, so Alt+Tab stays inside it; otherwise it is
--- the normal active workspace. Windows parked in other special workspaces (for
--- example notes in special:notes-hidden) have a different id and never match.
-local function altswitch_target_workspace()
-  local window = hl.get_active_window()
-  if window and window.workspace then
-    return window.workspace
-  end
-  return hl.get_active_workspace()
-end
-
 local function altswitch_snapshot()
-  local target = altswitch_target_workspace()
-  if target == nil then
-    return {}
-  end
-
+  -- Scope to the active window's workspace, not hl.get_active_workspace():
+  -- inside a special workspace the latter still reports the normal workspace
+  -- underneath, which would make Alt+Tab jump out of the special workspace.
+  local active = hl.get_active_window()
+  local scope = active and active.workspace or hl.get_active_workspace()
   local windows = {}
   for _, window in ipairs(hl.get_windows()) do
     local workspace = window.workspace
-    if window.mapped and workspace and workspace.id == target.id then
+    if window.mapped and workspace and workspace.id == scope.id then
       windows[#windows + 1] = window
     end
   end
