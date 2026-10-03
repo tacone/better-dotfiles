@@ -14,9 +14,13 @@
 # /usr/share/omarchy/bin, so PATH is set explicitly to stay self-sufficient no
 # matter how this script is invoked: keybinding, background run, notification
 # click.
+#
+# Bun's global bin lives under the XDG cache dir (~/.cache/.bun/bin) on this
+# machine; ~/.bun/bin only holds a stale, dangling prosey symlink. Include both
+# so prosey resolves regardless of which install location is current.
 set -euo pipefail
 
-export PATH="$HOME/.bun/bin:$HOME/.local/bin:/usr/share/omarchy/bin:$PATH"
+export PATH="$HOME/.bun/bin:${XDG_CACHE_HOME:-$HOME/.cache}/.bun/bin:$HOME/.local/bin:/usr/share/omarchy/bin:$PATH"
 
 readonly LOG_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/prosey-prompt"
 readonly LOG="$LOG_DIR/last-run.log"
@@ -29,6 +33,13 @@ else
   self=$(command -v -- "$0" || printf '%s' "$0")
 fi
 
+notify_start() {
+  omarchy-notification-send \
+    "Prosey" \
+    "Transcribing: $1" \
+    -u normal
+}
+
 notify_failure() {
   omarchy-notification-send \
     "Prosey failed" \
@@ -40,6 +51,7 @@ notify_failure() {
 run() {
   local url=$1 status
   mkdir -p "$LOG_DIR"
+  notify_start "$url"
 
   # `script` gives prosey a PTY (so it opens the browser) without a visible
   # window; --return propagates prosey's exit code and the session output is
