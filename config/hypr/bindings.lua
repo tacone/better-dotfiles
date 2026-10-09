@@ -313,6 +313,12 @@ end)
 -- does not include ~/.bin on PATH.
 o.bind("SUPER + ALT + Y", "Prosey (YouTube summary)", "$HOME/.bin/prosey-prompt")
 
+-- SUPER+ALT+M: recover an external monitor that went blank (output stuck at 0x0).
+-- Omarchy's monitor-watch only reloads, which does not recover this case; the
+-- script forces an explicit modeset. Absolute path: Hyprland's exec env has no
+-- ~/.bin on PATH.
+o.bind("SUPER + ALT + M", "Fix external monitor", "$HOME/.bin/fix-external-monitor")
+
 -- Logitech MX Keys examples:
 -- o.bind("SUPER + SHIFT + S", nil, "omarchy-capture-screenshot")
 -- o.bind("SUPER + H", nil, "voxtype record toggle")

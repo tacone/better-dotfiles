@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# fix-external-monitor - recover an external display that landed at 0x0 (blank).
+#
+# Omarchy's omarchy-hyprland-monitor-watch already tries to recover a modeless
+# (0x0) output, but it only issues `hyprctl reload`. On this Intel/i915 HDMI
+# setup the atomic commit fails with EINVAL after an i915 "HPD interrupt storm",
+# and a reload does not restore the mode - so the screen stays black until
+# reboot. This forces an explicit modeset instead, which does recover it.
+#
+# Hyprland 0.56 uses the Lua config parser, so runtime changes go through
+# `hyprctl eval`, not `hyprctl keyword`.
+#
+# Usage: fix-external-monitor [OUTPUT]   (default: HDMI-A-1)
+
+set -uo pipefail
+
+OUT="${1:-HDMI-A-1}"
+
+width() {
+  hyprctl monitors -j 2>/dev/null \
+    | jq -r --arg out "$OUT" 'first(.[] | select(.name==$out) | .width) // 0' 2>/dev/null
+}
+
+exists() {
+  hyprctl monitors all -j 2>/dev/null \
+    | jq -e --arg out "$OUT" 'any(.[]; .name==$out)' >/dev/null 2>&1
+}
+
+apply() { # $1 = mode
+  hyprctl eval "hl.monitor({ output = \"$OUT\", mode = \"$1\", position = \"auto-right\", scale = 1, disabled = false })" >/dev/null 2>&1
+}
+
+notify() { hyprctl notify -1 "$1" "$2" "$3" >/dev/null 2>&1; }
+
+if ! exists; then
+  notify 4000 "rgb(f0c000)" "No external monitor ($OUT) connected"
+  exit 1
+fi
+
+if [ "$(width)" != "0" ]; then
+  notify 2000 "rgb(00c000)" "$OUT already has a mode"
+  exit 0
+fi
+
+# 1) Direct re-modeset - the fix that reliably works.
+apply "1920x1080@60"
+sleep 1
+
+# 2) Stronger reset if the output is still modeless: drop it, then bring it back.
+if [ "$(width)" = "0" ]; then
+  hyprctl eval "hl.monitor({ output = \"$OUT\", disabled = true })" >/dev/null 2>&1
+  sleep 0.5
+  apply "1920x1080@60"
+  sleep 1
+fi
+
+if [ "$(width)" = "0" ]; then
+  notify 6000 "rgb(ff0000)" "$OUT still blank - try replugging the cable"
+  exit 1
+fi
+
+notify 3000 "rgb(00c000)" "External monitor restored"
