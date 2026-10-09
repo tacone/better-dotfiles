@@ -32,6 +32,9 @@
       ],
       "right": [
         {
+          "id": "omarchy.agents"
+        },
+        {
           "id": "omarchy.tray",
           "pinned": [
             "Slack_status_icon_1",
@@ -41,9 +44,6 @@
         },
         {
           "id": "omarchy.tailscale"
-        },
-        {
-          "id": "omarchy.agents"
         },
         {
           "id": "omarchy.bluetooth"

@@ -34,3 +34,5 @@ done
 export OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS=true
 export OPENCODE_ENABLE_EXA=1
 # <<< oh-my-opencode-slim background subagents <<<
+
+. "$HOME/.local/share/../bin/env"
