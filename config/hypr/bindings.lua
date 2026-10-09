@@ -69,9 +69,7 @@ o.bind("SUPER + ALT + P", "Preflight", { webapp = "https://preflight.traefik.me/
 -- SUPER+ALT+A: Claude webapp.
 o.bind("SUPER + ALT + A", "Claude", { webapp = "https://claude.ai/new" })
 
--- SUPER+SHIFT+E: Gmail webapp (replaces default Hey).
-hl.unbind("SUPER + SHIFT + E")
-o.bind("SUPER + SHIFT + E", "Email", { webapp = "https://mail.google.com/", focus = true })
+-- SUPER+SHIFT+E: Gmail scratchpad — see the scratchpad section below.
 
 -- SUPER+SHIFT+C: Google Calendar webapp (replaces default Hey Calendar).
 hl.unbind("SUPER + SHIFT + C")
@@ -280,11 +278,40 @@ o.bind("SUPER + A", "ChatGPT scratchpad", function()
   hl.dispatch(hl.dsp.workspace.toggle_special("chatgpt"))
 end)
 
+-- SUPER+SHIFT+E: Gmail scratchpad on the primary monitor (eDP-1), same behavior
+-- as the ChatGPT scratchpad. When the special:email workspace is missing or
+-- empty, launch Gmail into it before showing it. The launcher (bin/email-webapp)
+-- reads GMAIL_ACCOUNT (set it in ~/.zshrc / ~/.zshrc.local) and selects that
+-- account by address via ?authuser=; with the variable unset it opens the
+-- default account. Closing it empties the workspace, which Hyprland removes
+-- automatically, so the next toggle launches Gmail again.
+hl.unbind("SUPER + SHIFT + E")
+o.bind("SUPER + SHIFT + E", "Email scratchpad", function()
+  -- If the Gmail scratchpad is shown on another monitor, focus it instead of
+  -- toggling it off.
+  if focus_special_if_elsewhere("email") then
+    return
+  end
+
+  -- Always appear on the primary monitor.
+  hl.dispatch(hl.dsp.focus({ monitor = "eDP-1" }))
+
+  local ws = hl.get_workspace("special:email")
+  if ws == nil or ws.is_empty then
+    -- Missing or empty: launch Gmail into the scratchpad.
+    hl.exec_cmd("$HOME/.bin/email-webapp", { workspace = "special:email" })
+  end
+  hl.dispatch(hl.dsp.workspace.toggle_special("email"))
+end)
+
 -- SUPER+O: OpenCode scratchpad on the primary monitor (eDP-1), same behavior as
 -- the terminal scratchpad. When the special:opencode workspace is missing or
 -- empty, launch opencode in a fresh terminal (in ~/.dotfiles) into it before
--- showing it. Closing it empties the workspace, which Hyprland removes
--- automatically, so the next toggle creates a fresh opencode again.
+-- showing it. The launcher (bin/opencode-pinned) resumes the first pinned
+-- opencode session for the workspace directory (~/.dotfiles) when one exists,
+-- otherwise starts a fresh session. Closing it
+-- empties the workspace, which Hyprland removes automatically, so the next
+-- toggle re-runs the launcher.
 -- (SUPER+SHIFT+O is left untouched.)
 hl.unbind("SUPER + O")
 o.bind("SUPER + O", "OpenCode scratchpad", function()
@@ -299,8 +326,9 @@ o.bind("SUPER + O", "OpenCode scratchpad", function()
 
   local ws = hl.get_workspace("special:opencode")
   if ws == nil or ws.is_empty then
-    -- Missing or empty: launch opencode in a fresh terminal into the scratchpad.
-    hl.exec_cmd("omarchy-launch-terminal --dir=$HOME/.dotfiles opencode", { workspace = "special:opencode" })
+    -- Missing or empty: launch opencode (resuming the first pinned session for
+    -- this directory) into the scratchpad.
+    hl.exec_cmd("omarchy-launch-terminal --dir=$HOME/.dotfiles $HOME/.bin/opencode-pinned \"$HOME/.dotfiles\"", { workspace = "special:opencode" })
   end
   hl.dispatch(hl.dsp.workspace.toggle_special("opencode"))
 end)

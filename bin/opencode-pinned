@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# opencode-pinned — launch opencode, resuming the first pinned session that
+# belongs to the target directory when one exists.
+#
+# The opencode TUI keeps pinned sessions (ctrl+f in the session list) in
+# $XDG_STATE_HOME/opencode/session.json as {"pinned":[id, ...]} in pin order, and
+# renders the pinned section scoped to the current project: it filters that list
+# down to sessions whose directory matches, then numbers them 1..9 (the
+# quick-switch keys). opencode has no CLI selector for "the pinned session", so
+# this helper reads the file, keeps only pins whose session directory matches
+# <dir> (default: $PWD), and resumes the first one via `opencode --session <id>`.
+# With no matching pin it starts a fresh session.
+set -euo pipefail
+
+dir="$(realpath -m -- "${1:-$PWD}")"
+state="${XDG_STATE_HOME:-$HOME/.local/state}/opencode/session.json"
+db="${XDG_DATA_HOME:-$HOME/.local/share}/opencode/opencode.db"
+
+session=""
+if [[ -r $state && -f $db ]] && command -v jq >/dev/null 2>&1 && command -v sqlite3 >/dev/null 2>&1; then
+  dir_sql=${dir//\'/\'\'}
+  while IFS= read -r id; do
+    [[ -z $id ]] && continue
+    if [[ -n $(sqlite3 "$db" "SELECT 1 FROM session WHERE id = '$id' AND directory = '$dir_sql' LIMIT 1" 2>/dev/null || true) ]]; then
+      session="$id"
+      break
+    fi
+  done < <(jq -r '.pinned[]?' "$state" 2>/dev/null || true)
+fi
+
+if [[ -n $session ]]; then
+  exec opencode --session "$session"
+fi
+exec opencode
