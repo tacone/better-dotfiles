@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 # email-webapp — open Gmail as a web app, optionally pinned to an account.
 #
-# The account is read from the GMAIL_ACCOUNT environment variable (set it to an
-# email address in ~/.zshrc or ~/.zshrc.local). It is applied with the URL's
-# ?authuser= query parameter, so the account is selected by address instead of
-# the brittle /u/<n> index. When GMAIL_ACCOUNT is unset (or empty), Gmail opens
-# its default account, exactly as before.
+# The account is taken from the first argument when given, otherwise from the
+# GMAIL_ACCOUNT environment variable (set it to an email address in ~/.zshrc or
+# ~/.zshrc.local). It is applied with the URL's ?authuser= query parameter, so
+# the account is selected by address instead of the brittle /u/<n> index. When
+# no account is supplied, Gmail opens its default account, exactly as before.
 #
 # Hyprland is started by uwsm from the display manager, so its exec environment
 # never reads shell rc files. When the variable is not already in the
 # environment, pull it from the user's interactive zsh config.
 set -euo pipefail
 
-account="${GMAIL_ACCOUNT:-}"
+account="${1:-${GMAIL_ACCOUNT:-}}"
 if [[ -z $account ]]; then
   # Mark the value so any noise an interactive zsh startup happens to print on
   # stdout cannot contaminate it.

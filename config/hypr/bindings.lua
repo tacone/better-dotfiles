@@ -304,6 +304,29 @@ o.bind("SUPER + SHIFT + E", "Email scratchpad", function()
   hl.dispatch(hl.dsp.workspace.toggle_special("email"))
 end)
 
+-- SUPER+ALT+E: Gmail scratchpad for the corp account (qoobees.corp@gmail.com) on
+-- the primary monitor (eDP-1), same behavior as the SUPER+SHIFT+E Gmail
+-- scratchpad but in its own special:email-corp workspace so both accounts can be
+-- open at once. The account is passed to bin/email-webapp as an argument, which
+-- overrides GMAIL_ACCOUNT.
+o.bind("SUPER + ALT + E", "Gmail (corp) scratchpad", function()
+  -- If the corp Gmail scratchpad is shown on another monitor, focus it instead
+  -- of toggling it off.
+  if focus_special_if_elsewhere("email-corp") then
+    return
+  end
+
+  -- Always appear on the primary monitor.
+  hl.dispatch(hl.dsp.focus({ monitor = "eDP-1" }))
+
+  local ws = hl.get_workspace("special:email-corp")
+  if ws == nil or ws.is_empty then
+    -- Missing or empty: launch Gmail into the scratchpad.
+    hl.exec_cmd("$HOME/.bin/email-webapp qoobees.corp@gmail.com", { workspace = "special:email-corp" })
+  end
+  hl.dispatch(hl.dsp.workspace.toggle_special("email-corp"))
+end)
+
 -- SUPER+O: OpenCode scratchpad on the primary monitor (eDP-1), same behavior as
 -- the terminal scratchpad. When the special:opencode workspace is missing or
 -- empty, launch opencode in a fresh terminal (in ~/.dotfiles) into it before
