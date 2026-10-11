@@ -28,7 +28,7 @@ done
 
 [[ -f $HOME/.zsh.local ]] && source $HOME/.zsh.local
 # bun completions
-[ -s "/home/stefano/.bun/_bun" ] && source "/home/stefano/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # >>> oh-my-opencode-slim background subagents >>>
 export OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS=true
