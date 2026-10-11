@@ -226,6 +226,27 @@ local function focus_special_if_elsewhere(name)
   return false
 end
 
+-- Populate special:<name> before the caller toggles it: if a window matching
+-- `class_pat` (a Lua pattern) already exists anywhere, move it into the special
+-- workspace without revealing it (so the caller's toggle_special shows it);
+-- otherwise launch `launch_cmd` into it. Needed for native single-instance apps
+-- like Telegram, which refocus their existing window instead of opening a second
+-- one, so a plain "launch if empty" would never populate the scratchpad.
+local function adopt_or_launch_special(name, class_pat, launch_cmd)
+  for _, w in ipairs(hl.get_windows()) do
+    if w.class and w.class:find(class_pat) then
+      hl.dispatch(hl.dsp.window.move({
+        workspace = "special:" .. name,
+        window = w,
+        follow = false,
+      }))
+      return
+    end
+  end
+
+  hl.exec_cmd(launch_cmd, { workspace = "special:" .. name })
+end
+
 -- SUPER+S: toggle the scratchpad on the primary monitor (eDP-1).
 -- The default binding uses toggle_special which acts on the focused monitor;
 -- focus eDP-1 first so the scratchpad always appears there.
@@ -354,6 +375,53 @@ o.bind("SUPER + O", "OpenCode scratchpad", function()
     hl.exec_cmd("omarchy-launch-terminal --dir=$HOME/.dotfiles $HOME/.bin/opencode-pinned \"$HOME/.dotfiles\"", { workspace = "special:opencode" })
   end
   hl.dispatch(hl.dsp.workspace.toggle_special("opencode"))
+end)
+
+-- SUPER+ALT+D: Discord scratchpad on the primary monitor (eDP-1), same behavior
+-- as the ChatGPT scratchpad. The Discord webapp is launched into special:discord
+-- when that workspace is missing or empty (an already-running Discord window is
+-- moved in instead). Closing it empties the workspace, which Hyprland removes
+-- automatically, so the next toggle launches a fresh one.
+o.bind("SUPER + ALT + D", "Discord scratchpad", function()
+  -- If the Discord scratchpad is shown on another monitor, focus it instead of
+  -- toggling it off.
+  if focus_special_if_elsewhere("discord") then
+    return
+  end
+
+  -- Always appear on the primary monitor.
+  hl.dispatch(hl.dsp.focus({ monitor = "eDP-1" }))
+
+  local ws = hl.get_workspace("special:discord")
+  if ws == nil or ws.is_empty then
+    -- Missing or empty: adopt a running Discord window, else launch the webapp.
+    adopt_or_launch_special("discord", "discord%.com", "omarchy-launch-webapp https://discord.com/channels/@me")
+  end
+  hl.dispatch(hl.dsp.workspace.toggle_special("discord"))
+end)
+
+-- SUPER+ALT+T: Telegram scratchpad on the primary monitor (eDP-1), same behavior
+-- as the ChatGPT scratchpad. Telegram (native, single-instance) is moved into
+-- special:telegram when it is already running, or launched into it otherwise,
+-- whenever that workspace is missing or empty. Closing it empties the workspace,
+-- which Hyprland removes automatically, so the next toggle launches a fresh
+-- instance.
+o.bind("SUPER + ALT + T", "Telegram scratchpad", function()
+  -- If the Telegram scratchpad is shown on another monitor, focus it instead of
+  -- toggling it off.
+  if focus_special_if_elsewhere("telegram") then
+    return
+  end
+
+  -- Always appear on the primary monitor.
+  hl.dispatch(hl.dsp.focus({ monitor = "eDP-1" }))
+
+  local ws = hl.get_workspace("special:telegram")
+  if ws == nil or ws.is_empty then
+    -- Missing or empty: adopt the running Telegram window, else launch it.
+    adopt_or_launch_special("telegram", "org%.telegram%.desktop", "uwsm-app -- telegram-desktop")
+  end
+  hl.dispatch(hl.dsp.workspace.toggle_special("telegram"))
 end)
 
 -- SUPER+ALT+Y: prompt for a YouTube URL and summarize it with prosey.
