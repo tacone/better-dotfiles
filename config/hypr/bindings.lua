@@ -377,12 +377,12 @@ o.bind("SUPER + O", "OpenCode scratchpad", function()
   hl.dispatch(hl.dsp.workspace.toggle_special("opencode"))
 end)
 
--- SUPER+ALT+D: Discord scratchpad on the primary monitor (eDP-1), same behavior
+-- SUPER+D: Discord scratchpad on the primary monitor (eDP-1), same behavior
 -- as the ChatGPT scratchpad. The Discord webapp is launched into special:discord
 -- when that workspace is missing or empty (an already-running Discord window is
 -- moved in instead). Closing it empties the workspace, which Hyprland removes
 -- automatically, so the next toggle launches a fresh one.
-o.bind("SUPER + ALT + D", "Discord scratchpad", function()
+o.bind("SUPER + D", "Discord scratchpad", function()
   -- If the Discord scratchpad is shown on another monitor, focus it instead of
   -- toggling it off.
   if focus_special_if_elsewhere("discord") then
