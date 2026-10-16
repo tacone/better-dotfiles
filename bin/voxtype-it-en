@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# voxtype-it-en — control the "Italian speech -> English text" voxtype daemon.
+#
+# That daemon is a SECOND voxtype instance (systemd --user
+# voxtype-it-en.service) running in its own XDG_RUNTIME_DIR, because voxtype
+# permits only one daemon per runtime dir and its language/translate settings
+# are global. `voxtype record` finds the daemon through $XDG_RUNTIME_DIR, so we
+# point it at the same isolated dir before dispatching.
+#
+# Usage: voxtype-it-en [start|stop|toggle|cancel]   (default: toggle)
+#
+# Bound in config/hypr/bindings.lua to SUPER+Z as push-to-talk:
+#   key press   -> voxtype-it-en start
+#   key release -> voxtype-it-en stop
+set -euo pipefail
+
+# Hyprland's exec environment is minimal; keep the tools we rely on reachable.
+export PATH="/usr/bin:/bin:${PATH:-}"
+
+runtime_root="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+export XDG_RUNTIME_DIR="$runtime_root/voxtype-it-en"
+
+readonly config="$HOME/.config/voxtype/config.it-en.toml"
+
+# Start the daemon on demand if it is not running yet (e.g. a press that races
+# graphical-session.target on login). The PID lock lives under the isolated dir.
+if [[ ! -f "$XDG_RUNTIME_DIR/voxtype/voxtype.lock" ]]; then
+  systemctl --user start voxtype-it-en.service || true
+fi
+
+exec voxtype -c "$config" record "${1:-toggle}"

@@ -438,6 +438,16 @@ o.bind("SUPER + ALT + Y", "Prosey (YouTube summary)", "$HOME/.bin/prosey-prompt"
 -- ~/.bin on PATH.
 o.bind("SUPER + ALT + M", "Fix external monitor", "$HOME/.bin/fix-external-monitor")
 
+-- SUPER+Z: hold-to-talk dictation, Italian speech translated to English.
+-- voxtype's language/translate are global daemon settings and only one daemon
+-- may run per XDG_RUNTIME_DIR, so translated dictation is a dedicated second
+-- daemon (systemd --user voxtype-it-en.service + ~/.config/voxtype/config.it-en.toml)
+-- isolated in its own runtime dir. The helper sets that dir and passes the
+-- config. Push-to-talk: start on press, stop (and transcribe) on release.
+-- SUPER+CTRL+Z / SUPER+CTRL+ALT+Z (zoom) are unaffected.
+o.bind("SUPER + Z", "Dictate: Italian → English", "$HOME/.bin/voxtype-it-en start")
+o.bind("SUPER + Z", "Dictate: Italian → English", "$HOME/.bin/voxtype-it-en stop", { release = true })
+
 -- Logitech MX Keys examples:
 -- o.bind("SUPER + SHIFT + S", nil, "omarchy-capture-screenshot")
 -- o.bind("SUPER + H", nil, "voxtype record toggle")
