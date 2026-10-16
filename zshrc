@@ -26,7 +26,11 @@ for config_file ($HOME/.dotfiles/.zsh.d/*.zsh); do
   source $config_file
 done
 
-. "$HOME/.local/share/../bin/env"
+# PATH helper uv installs under ~/.local/bin (it prepends ~/.local/bin). Guard
+# it: it only exists on hosts where uv is installed there, and an unguarded
+# source fails with "no such file or directory" on every other machine.
+# Sourced here, before ~/.zsh.local, so it lands ahead of mise's PATH rewrite.
+[[ -f $HOME/.local/bin/env ]] && . "$HOME/.local/bin/env"
 [[ -f $HOME/.zsh.local ]] && source $HOME/.zsh.local
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
