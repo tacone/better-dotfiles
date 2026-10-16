@@ -26,6 +26,7 @@ for config_file ($HOME/.dotfiles/.zsh.d/*.zsh); do
   source $config_file
 done
 
+. "$HOME/.local/share/../bin/env"
 [[ -f $HOME/.zsh.local ]] && source $HOME/.zsh.local
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"

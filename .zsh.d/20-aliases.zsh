@@ -62,8 +62,16 @@ alias trim='sed "s/\(^ *\| *\$\)//g"'
 
 alias sum-of='xargs | sed -e "s/\\ /+/g" | bc'
 
-alias add-alias='echo "Please insert the new alias:"; read string; echo alias ${string} >> $HOME/.aliases; source $HOME/.aliases'
-alias edit-alias='$EDITOR $HOME/.aliases; source $HOME/.aliases'
+add-alias() {
+    echo "Please insert the new alias:"
+    read string
+    [[ -n "$string" ]] && echo "alias ${string}" >> "$HOME/.aliases"
+    source "$HOME/.aliases"
+}
+edit-alias() {
+    "$EDITOR" "$HOME/.aliases"
+    source "$HOME/.aliases"
+}
 
 # please add custom aliases in the file below instead
 source $HOME/.aliases
