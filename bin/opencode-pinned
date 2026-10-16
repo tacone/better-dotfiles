@@ -10,7 +10,23 @@
 # this helper reads the file, keeps only pins whose session directory matches
 # <dir> (default: $PWD), and resumes the first one via `opencode --session <id>`.
 # With no matching pin it starts a fresh session.
+#
+# OpenCode 2 is pinned explicitly (see below). Never rely on a bare `opencode`
+# here: this script is a bash script exec'd by Hyprland, so ~/.zshenv and
+# ~/.zsh.local (which put V2 first for zsh sessions) do not apply, and the
+# session PATH ranks the mise shims ahead of ~/.opencode/bin — that order
+# resolves `opencode` to the mise-managed V1 (1.18.x). The V2 binary lives at
+# $HOME/.opencode/bin/opencode; override with OPENCODE_BIN if it moves.
 set -euo pipefail
+
+opencode_bin="${OPENCODE_BIN:-$HOME/.opencode/bin/opencode}"
+if [[ ! -x $opencode_bin ]]; then
+  opencode_bin="$(command -v opencode || true)"
+fi
+if [[ -z $opencode_bin ]]; then
+  echo "opencode-pinned: no opencode binary found (looked for $HOME/.opencode/bin/opencode and \$PATH)" >&2
+  exit 1
+fi
 
 dir="$(realpath -m -- "${1:-$PWD}")"
 state="${XDG_STATE_HOME:-$HOME/.local/state}/opencode/session.json"
@@ -29,6 +45,6 @@ if [[ -r $state && -f $db ]] && command -v jq >/dev/null 2>&1 && command -v sqli
 fi
 
 if [[ -n $session ]]; then
-  exec opencode --session "$session"
+  exec "$opencode_bin" --session "$session"
 fi
-exec opencode
+exec "$opencode_bin"

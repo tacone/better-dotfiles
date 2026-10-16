@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+# opencode1 — run OpenCode V1, the mise-managed release (1.18.x).
+#
+# V2 is the standalone binary at ~/.opencode/bin/opencode and owns the bare
+# name `opencode` (see ~/.zshenv and ~/.zsh.local). This helper pins the V1
+# major so the two versions stay reachable side by side.
+#
+# mise keeps the V1 install at ~/.local/share/mise/installs/opencode/, where
+# `1` is the major-version alias (currently -> 1.18.31).
+exec "$HOME/.local/share/mise/installs/opencode/1/opencode" "$@"
